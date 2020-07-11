@@ -1,0 +1,254 @@
+#!/usr/bin/env python3
+
+"""wgconfig.py: A class for parsing and writing Wireguard configuration files."""
+
+__author__ = "Dirk Henrici"
+__license__ = "AGPL" # + author has right to release in parallel under different licenses
+__email__ = "towalink.wgconfig@henrici.name"
+
+
+import os
+
+
+class WGConfig(object):
+    SECTION_FIRSTLINE = '_index_firstline'
+    SECTION_LASTLINE = '_index_lastline'
+
+    def __init__(self, file, keyattr='PublicKey'):
+        """Object initialization"""
+        self.filename = self.file2filename(file)
+        self.keyattr = keyattr
+        self.lines =[]
+        self.initialize_file()
+        
+    def file2filename(self, file):
+        """Handle special filenames: 'wg0' and 'wg0.conf' become '/etc/wireguard/wg0.conf' """
+        if os.path.basename(file) == file:
+            if not file.endswith('.conf'):
+                file += '.conf'
+            file = os.path.join('/etc/wireguard', file)
+        return file
+
+    def invalidate_data(self):
+        """Clears the data structs"""
+        self._interface = None
+        self._peers = None
+       
+    def read_file(self):
+        """Reads the Wireguard config file into memory"""
+        with open(self.filename, 'r') as wgfile:
+            self.lines = [line.rstrip() for line in wgfile.readlines()]
+        self.invalidate_data()
+        
+    def write_file(self, file=None):
+        """Writes a Wireguard config file from memory to file"""
+        if file is None:
+            filename = self.filename
+        else:
+            filename = self.file2filename(file)
+        with open(filename, 'w') as wgfile:
+             wgfile.writelines(line + '\n' for line in self.lines)
+
+    def parse_line(self, line):
+        """Splits a single attr/value line into its parts"""
+        attr, _, value = line.partition('=')
+        attr = attr.strip()
+        parts = value.partition('#')
+        value = parts[0].strip() # strip comments and whitespace
+        comment = parts[1] + parts[2]
+        if value.isnumeric():
+            value = [int(value)]
+        else:
+            value = [item.strip() for item in value.split(',')] # decompose into list based on commata as separator
+        return attr, value, comment
+
+    def parse_lines(self):
+        """Parses the lines of a Wireguard config file into memory"""
+        
+        # There will be two special attributes in the parsed data:
+        #_index_firstline: Line (zero indexed) of the section header (any leading lines with comments are not included)
+        #_index_lastline: Line (zero indexed) of the last attribute line of the section (any directly following comments are not included)
+        
+        def close_section(section, section_data):
+            section_data = {k: (v if len(v)>1 else v[0]) for k, v in section_data.items()}
+            if section is None: # nothing to close on first section
+                return
+            elif section == 'interface': # close interface section
+                self._interface = section_data
+            else: # close peer section
+                peername = section_data.get(self.keyattr)
+                self._peers[peername] = section_data
+        
+        self._interface = dict()
+        self._peers = dict()
+        section = None
+        section_data = dict()
+        for i, line in enumerate(self.lines):
+            # Ignore leading whitespace and trailing whitespace
+            line = line.strip()
+            # Ignore empty lines and comments
+            if (len(line) == 0) or line.startswith('#'):
+                continue
+            if line.startswith('['): # section
+                close_section(section, section_data)
+                section_data = dict()
+                section = line[1:].partition(']')[0].lower()
+                section_data[self.SECTION_FIRSTLINE] = section_data[self.SECTION_LASTLINE] = [i]
+                if not section in ['interface', 'peer']:
+                    raise ValueError(f'Unsupported section [{section}] in line {i}')
+            else: # regular line
+                attr, value, comment = self.parse_line(line)
+                section_data[attr] = section_data.get(attr, [])
+                section_data[attr].extend(value)
+                section_data[self.SECTION_LASTLINE] = [i]
+        close_section(section, section_data)
+
+    def handle_leading_comment(self, leading_comment):
+        """Appends a leading comment for a section"""
+        if leading_comment is not None:
+            if leading_comment.strip()[0] != '#':
+                raise ValueError('A comment needs to start with a "#"')
+            self.lines.append(leading_comment)
+
+    def initialize_file(self, leading_comment=None):
+        """Empties the file and adds the interface section header"""
+        self.lines = list()
+        self.handle_leading_comment(leading_comment) # add leading comment if needed
+        self.lines.append('[Interface]')
+        self.invalidate_data()
+
+    def add_peer(self, key, leading_comment=None):
+        """Adds a new peer with the given (public) key"""        
+        if key in self.peers:
+            raise KeyError('Peer to be added already exists')
+        self.lines.append('') # append an empty line for separation
+        self.handle_leading_comment(leading_comment) # add leading comment if needed
+        # Append peer with key attribute
+        self.lines.append('[Peer]')
+        self.lines.append(f'{self.keyattr} = {key}')
+        # Invalidate data cache
+        self.invalidate_data()
+
+    def del_peer(self, key):
+        """Removes the peer with the given (public) key"""
+        if not key in self.peers:
+            raise KeyError('The peer to be deleted does not exist')
+        section_firstline = self.peers[key][self.SECTION_FIRSTLINE]
+        section_lastline = self.peers[key][self.SECTION_LASTLINE]
+        # Remove comments directly before the peer section
+        while section_firstline > 0:
+            line = self.lines[section_firstline - 1].strip()
+            if (len(line) > 0) and (line[0] == '#'):
+                section_firstline -= 1
+            else:
+                break
+        # Remove a blank line directly before the peer section        
+        if section_firstline > 0:
+            if len(self.lines[section_firstline - 1]) == 0:
+                section_firstline -= 1
+        # Only keep needed lines
+        result = []
+        if section_firstline > 0:
+            result.extend(self.lines[0:(section_firstline - 1)])
+        result.extend(self.lines[(section_lastline + 1):])
+        self.lines = result
+        # Invalidate data cache
+        self.invalidate_data()
+
+    def get_sectioninfo(self, key):
+        """Get first and last line of the section identified by the given key ("None" for interface section)"""
+        if key is None: # interface
+            section_firstline = self.interface[self.SECTION_FIRSTLINE]
+            section_lastline = self.interface[self.SECTION_LASTLINE]
+        else: # peer
+            if not key in self.peers:
+                raise KeyError('The specified peer does not exist')
+            section_firstline = self.peers[key][self.SECTION_FIRSTLINE]
+            section_lastline = self.peers[key][self.SECTION_LASTLINE]
+        return section_firstline, section_lastline
+
+    def add_attr(self, key, attr, value, leading_comment=None, append_as_line=False):
+        """Adds an attribute/value pair to the given peer ("None" for adding an interface attribute)"""
+        section_firstline, section_lastline = self.get_sectioninfo(key)
+        if leading_comment is not None:
+            if leading_comment.strip()[0] != '#':
+                raise ValueError('A comment needs to start with a "#"')
+        # Look for line with the attribute
+        line_found = None
+        for i in range(section_firstline + 1, section_lastline + 1):
+            line_attr, line_value, line_comment = self.parse_line(self.lines[i])
+            if attr == line_attr:
+                line_found = i
+        # Add the attribute at the right place
+        if (line_found is None) or append_as_line:
+            line_found = section_lastline if (line_found is None) else line_found
+            line_found += 1
+            self.lines.insert(line_found, f'{attr} = {value}')
+        else:
+            line_attr, line_value, line_comment = self.parse_line(self.lines[line_found])
+            line_value.append(value)
+            if len(line_comment) > 0:
+                line_comment = ' ' + line_comment
+            line_value = [str(item) for item in line_value]
+            self.lines[line_found] = line_attr + ' = ' + ', '.join(line_value) + line_comment
+        # Handle leading comments
+        if leading_comment is not None:
+            self.lines.insert(line_found, leading_comment)
+        # Invalidate data cache
+        self.invalidate_data()
+
+    def del_attr(self, key, attr, value=None, remove_leading_comments=True):
+        """Removes an attribute/value pair from the given peer ("None" for adding an interface attribute); set 'value' to 'None' to remove all values"""
+        section_firstline, section_lastline = self.get_sectioninfo(key)
+        # Find all lines with matching attribute name and (if requested) value
+        line_found = []
+        for i in range(section_firstline + 1, section_lastline + 1):
+            line_attr, line_value, line_comment = self.parse_line(self.lines[i])
+            if attr == line_attr:
+                if (value is None) or (value in line_value):
+                    line_found.append(i)
+        if len(line_found) == 0:
+            raise ValueError('The attribute/value to be deleted is not present')
+        # Process all relevant lines
+        for i in reversed(line_found): # reversed so that non-processed indices stay valid
+            if value is None:
+                del(self.lines[i])
+            else:
+                line_attr, line_value, line_comment = self.parse_line(self.lines[i])
+                line_value.remove(value)
+                if len(line_value) > 0: # keep remaining values in that line
+                    self.lines[i] = line_attr + ' = ' + ', '.join(line_value) + line_comment
+                else: # otherwise line is no longer needed
+                    del(self.lines[i])
+        # Handle leading comments
+        if remove_leading_comments:
+            i = line_found[0] - 1
+            while i > 0:
+                if self.lines[i][0] == '#':
+                    del(self.lines[i])
+                    i -= 1
+                else:
+                    break
+        # Invalidate data cache
+        self.invalidate_data()
+
+    @property
+    def interface(self):
+        if self._interface is None:
+            self.parse_lines()
+        return self._interface
+        
+    @property
+    def peers(self):
+        if self._peers is None:
+            self.parse_lines()
+        return self._peers
+
+
+def main():
+    """Main function"""
+    print('This is a library to be imported into your applications.')
+
+
+if __name__ == "__main__":
+    main()
