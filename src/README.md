@@ -102,10 +102,10 @@ Please see below for more detailed usage information.
   * wc = wgconfig.WGConfig('/etc/wireguard/wg0.conf')
 
 * read_file()
-  Reads the Wireguard config file into memory
+  Reads the WireGuard config file into memory
         
 * write_file(file)
-  Writes a Wireguard config file from memory to file
+  Writes a WireGuard config file from memory to file
         
   Parameters:
   * file (str, optional, default: None): Path of the WireGuard configuration file

@@ -149,7 +149,7 @@ class WGConfig(object):
         # Only keep needed lines
         result = []
         if section_firstline > 0:
-            result.extend(self.lines[0:(section_firstline - 1)])
+            result.extend(self.lines[0:section_firstline])
         result.extend(self.lines[(section_lastline + 1):])
         self.lines = result
         # Invalidate data cache

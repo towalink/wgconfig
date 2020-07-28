@@ -191,9 +191,15 @@ def test_del_peer1(setup_testconfig1):
                                                              'Endpoint': '192.168.0.3:51820',
                                                              'PersistentKeepalive': 25,
                                                              'PublicKey': 'eBvBVLo6wH0XkBfIjeLPf8ydBTfU/gMqJOH4nmVXcDE=',
-                                                             '_index_firstline': 8,
-                                                             '_index_lastline': 15}}
+                                                             '_index_firstline': 9,
+                                                             '_index_lastline': 16}}
     assert wc.peers == peers, 'first peer incorrectly deleted'
+    interface = {'Address': 'fe80::1/64',
+                 'ListenPort': 51820,
+                 'PrivateKey': '6FYKQKEtGFAb5HSwyj5cQl3wgS1E9d6SqVjdVksOn2s=',
+                 '_index_firstline': 1,
+                 '_index_lastline': 6}
+    assert wc.interface == interface, 'first peer incorrectly deleted'
 
 def test_del_peer2(setup_testconfig1):
     wc = setup_testconfig1
@@ -207,6 +213,12 @@ def test_del_peer2(setup_testconfig1):
                                                              '_index_firstline': 9,
                                                              '_index_lastline': 14}}
     assert wc.peers == peers, 'second peer incorrectly deleted'
+    interface = {'Address': 'fe80::1/64',
+                 'ListenPort': 51820,
+                 'PrivateKey': '6FYKQKEtGFAb5HSwyj5cQl3wgS1E9d6SqVjdVksOn2s=',
+                 '_index_firstline': 1,
+                 '_index_lastline': 6}
+    assert wc.interface == interface, 'second peer incorrectly deleted'
 
 def test_add_attr1(setup_testconfig1):
     """add_attr to existing attr with value list"""
