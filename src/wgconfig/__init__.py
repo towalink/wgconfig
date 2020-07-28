@@ -11,17 +11,21 @@ import os
 
 
 class WGConfig(object):
+    """A class for parsing and writing Wireguard configuration files"""
     SECTION_FIRSTLINE = '_index_firstline'
     SECTION_LASTLINE = '_index_lastline'
+    _interface = None # interface attributes
+    _peers = None # peer data
 
     def __init__(self, file, keyattr='PublicKey'):
         """Object initialization"""
         self.filename = self.file2filename(file)
         self.keyattr = keyattr
-        self.lines =[]
+        self.lines = []
         self.initialize_file()
-        
-    def file2filename(self, file):
+
+    @staticmethod
+    def file2filename(file):
         """Handle special filenames: 'wg0' and 'wg0.conf' become '/etc/wireguard/wg0.conf' """
         if os.path.basename(file) == file:
             if not file.endswith('.conf'):
@@ -33,13 +37,13 @@ class WGConfig(object):
         """Clears the data structs"""
         self._interface = None
         self._peers = None
-       
+
     def read_file(self):
         """Reads the Wireguard config file into memory"""
         with open(self.filename, 'r') as wgfile:
             self.lines = [line.rstrip() for line in wgfile.readlines()]
         self.invalidate_data()
-        
+
     def write_file(self, file=None):
         """Writes a Wireguard config file from memory to file"""
         if file is None:
@@ -47,9 +51,10 @@ class WGConfig(object):
         else:
             filename = self.file2filename(file)
         with open(filename, 'w') as wgfile:
-             wgfile.writelines(line + '\n' for line in self.lines)
+            wgfile.writelines(line + '\n' for line in self.lines)
 
-    def parse_line(self, line):
+    @staticmethod
+    def parse_line(line):
         """Splits a single attr/value line into its parts"""
         attr, _, value = line.partition('=')
         attr = attr.strip()
@@ -64,13 +69,13 @@ class WGConfig(object):
 
     def parse_lines(self):
         """Parses the lines of a Wireguard config file into memory"""
-        
+
         # There will be two special attributes in the parsed data:
         #_index_firstline: Line (zero indexed) of the section header (any leading lines with comments are not included)
         #_index_lastline: Line (zero indexed) of the last attribute line of the section (any directly following comments are not included)
-        
+
         def close_section(section, section_data):
-            section_data = {k: (v if len(v)>1 else v[0]) for k, v in section_data.items()}
+            section_data = {k: (v if len(v) > 1 else v[0]) for k, v in section_data.items()}
             if section is None: # nothing to close on first section
                 return
             elif section == 'interface': # close interface section
@@ -78,7 +83,7 @@ class WGConfig(object):
             else: # close peer section
                 peername = section_data.get(self.keyattr)
                 self._peers[peername] = section_data
-        
+
         self._interface = dict()
         self._peers = dict()
         section = None
@@ -97,7 +102,7 @@ class WGConfig(object):
                 if not section in ['interface', 'peer']:
                     raise ValueError(f'Unsupported section [{section}] in line {i}')
             else: # regular line
-                attr, value, comment = self.parse_line(line)
+                attr, value, _comment = self.parse_line(line)
                 section_data[attr] = section_data.get(attr, [])
                 section_data[attr].extend(value)
                 section_data[self.SECTION_LASTLINE] = [i]
@@ -118,7 +123,7 @@ class WGConfig(object):
         self.invalidate_data()
 
     def add_peer(self, key, leading_comment=None):
-        """Adds a new peer with the given (public) key"""        
+        """Adds a new peer with the given (public) key"""
         if key in self.peers:
             raise KeyError('Peer to be added already exists')
         self.lines.append('') # append an empty line for separation
@@ -142,7 +147,7 @@ class WGConfig(object):
                 section_firstline -= 1
             else:
                 break
-        # Remove a blank line directly before the peer section        
+        # Remove a blank line directly before the peer section
         if section_firstline > 0:
             if len(self.lines[section_firstline - 1]) == 0:
                 section_firstline -= 1
@@ -234,12 +239,14 @@ class WGConfig(object):
 
     @property
     def interface(self):
+        """Dictionary with interface attributes"""
         if self._interface is None:
             self.parse_lines()
         return self._interface
-        
+
     @property
     def peers(self):
+        """Dictionary with peer data"""
         if self._peers is None:
             self.parse_lines()
         return self._peers

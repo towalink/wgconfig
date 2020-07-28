@@ -9,7 +9,7 @@ All notable changes to this project are documented in this file.
 - n/a
 
 ### Changed
-- n/a
+- Formatting improvements.
 
 ### Fixed
 - n/a
