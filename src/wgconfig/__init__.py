@@ -50,7 +50,7 @@ class WGConfig(object):
             filename = self.filename
         else:
             filename = self.file2filename(file)
-        with open(filename, 'w') as wgfile:
+        with os.fdopen(os.open(filename, os.O_WRONLY | os.O_CREAT, 0o640), 'w') as wgfile:
             wgfile.writelines(line + '\n' for line in self.lines)
 
     @staticmethod
