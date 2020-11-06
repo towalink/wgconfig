@@ -145,7 +145,7 @@ Please see below for more detailed usage information.
   Note: Comment lines immediately before the Peer section
   
   Parameters:
-  * key (str): Public key of the new peer
+  * key (str): Public key of the peer
 
   Examples:
   * wc.del_peer('801mgm2JhjTOCxfihEknzFJGYxDvi+8oVYBrWe3hOWM=')
@@ -154,7 +154,7 @@ Please see below for more detailed usage information.
   Adds an attribute/value pair to the given peer ('None' for adding an interface attribute)
   
   Parameters:
-  * key (str): Key of the new peer. Set to 'None' to denote the Interface section
+  * key (str): Key of the peer. Set to 'None' to denote the Interface section
   * attr (str) Name of the attribute to add
   * value (str or int) Value of the attribute to add
   * leading_comment (str, optional, default: None): Comment line to add before the Peer section
@@ -171,7 +171,7 @@ Please see below for more detailed usage information.
   Removes an attribute/value pair from the given peer ('None' for adding an interface attribute); set 'value' to 'None' to remove all values
 
   Parameters:
-  * key (str): Key of the new peer. Set to 'None' to denote the Interface section
+  * key (str): Key of the peer. Set to 'None' to denote the Interface section
   * attr (str) Name of the attribute to remove
   * value (str or int, optional, default: None) Value of the attribute to remove
       Set to 'None' if all values (either comma-separated or is multiple attribute lines) shall be removed. Otherwise specify the specific value to be removed.
