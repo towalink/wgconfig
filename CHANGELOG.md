@@ -9,10 +9,26 @@ All notable changes to this project are documented in this file.
 - n/a
 
 ### Changed
+
+- n/a
+
+### Fixed
+
+- n/a
+
+## [0.1.4] - 2020-11-07
+
+### Added
+
+- Added simple module wrapping wg tool.
+
+### Changed
+
 - Formatting improvements.
 
 ### Fixed
-- n/a
+
+- README corrections.
 
 ## [0.1.3] - 2020-07-28
 

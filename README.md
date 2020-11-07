@@ -67,13 +67,21 @@ Create a new WireGuard configuration file as '/root/wgtest.conf':
 ```python
 import wgconfig
 wc = wgconfig.WGConfig('/root/wgtest.conf')
-# Add attribute to Interface section
+# Add attribute to Interface section (denoted by 'None')
 wc.add_attr(None, 'PrivateKey', '6FYKQKEtGFAb5HSwyj5cQl3wgS1E9d6SqVjdVksOn2s=')
 # Save to disk
 wc.write_file()
 # Access the data
 print('INTERFACE DATA:', wc.interface)
 print('PEER DATA (there are no peers yet):', wc.peers)
+```
+
+The module also contains simple wrappers around the wg command to generate and manage keys:
+
+```python
+import wgconfig.wgexec as wgexec
+# Create a new WireGuard private key
+private_key = wgexec.generate_privatekey()
 ```
 
 Please see below for more detailed usage information.
