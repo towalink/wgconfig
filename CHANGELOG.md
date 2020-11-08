@@ -10,7 +10,7 @@ All notable changes to this project are documented in this file.
 
 ### Changed
 
-- n/a
+- Properly handle comments at begin and end of sections in line indices
 
 ### Fixed
 

@@ -14,6 +14,7 @@ class WGConfig(object):
     """A class for parsing and writing Wireguard configuration files"""
     SECTION_FIRSTLINE = '_index_firstline'
     SECTION_LASTLINE = '_index_lastline'
+    SECTION_RAW = '_rawdata'
     _interface = None # interface attributes
     _peers = None # peer data
 
@@ -71,8 +72,8 @@ class WGConfig(object):
         """Parses the lines of a Wireguard config file into memory"""
 
         # There will be two special attributes in the parsed data:
-        #_index_firstline: Line (zero indexed) of the section header (any leading lines with comments are not included)
-        #_index_lastline: Line (zero indexed) of the last attribute line of the section (any directly following comments are not included)
+        #_index_firstline: Line (zero indexed) of the section header (including any leading lines with comments)
+        #_index_lastline: Line (zero indexed) of the last attribute line of the section (including any directly following comments)
 
         def close_section(section, section_data):
             section_data = {k: (v if len(v) > 1 else v[0]) for k, v in section_data.items()}
@@ -88,19 +89,29 @@ class WGConfig(object):
         self._peers = dict()
         section = None
         section_data = dict()
+        last_empty_line_in_section = None
         for i, line in enumerate(self.lines):
             # Ignore leading whitespace and trailing whitespace
             line = line.strip()
             # Ignore empty lines and comments
-            if (len(line) == 0) or line.startswith('#'):
+            if len(line) == 0:
+                last_empty_line_in_section = i
                 continue
             if line.startswith('['): # section
+                if last_empty_line_in_section is not None:
+                    section_data[self.SECTION_LASTLINE] = [last_empty_line_in_section - 1]
                 close_section(section, section_data)
                 section_data = dict()
                 section = line[1:].partition(']')[0].lower()
-                section_data[self.SECTION_FIRSTLINE] = section_data[self.SECTION_LASTLINE] = [i]
+                if last_empty_line_in_section is None:
+                    section_data[self.SECTION_FIRSTLINE] = section_data[self.SECTION_LASTLINE] = [i]
+                else:
+                    section_data[self.SECTION_FIRSTLINE] = section_data[self.SECTION_LASTLINE] = [last_empty_line_in_section + 1]
+                    last_empty_line_in_section = None
                 if not section in ['interface', 'peer']:
                     raise ValueError(f'Unsupported section [{section}] in line {i}')
+            elif line.startswith('#'):
+                section_data[self.SECTION_LASTLINE] = [i]
             else: # regular line
                 attr, value, _comment = self.parse_line(line)
                 section_data[attr] = section_data.get(attr, [])
