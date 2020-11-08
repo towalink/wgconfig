@@ -89,7 +89,7 @@ class WGConfig(object):
         self._peers = dict()
         section = None
         section_data = dict()
-        last_empty_line_in_section = None
+        last_empty_line_in_section = -1 # virtual empty line before start of file
         for i, line in enumerate(self.lines):
             # Ignore leading whitespace and trailing whitespace
             line = line.strip()
