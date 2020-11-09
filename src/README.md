@@ -150,7 +150,8 @@ Please see below for more detailed usage information.
 
 * del_peer(key)
   Removes the peer with the given (public) key
-  Note: Comment lines immediately before the Peer section
+  
+  Note: Comment lines immediately before the Peer section are removed, too.
   
   Parameters:
   * key (str): Public key of the peer
