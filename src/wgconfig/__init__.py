@@ -51,7 +51,7 @@ class WGConfig(object):
             filename = self.filename
         else:
             filename = self.file2filename(file)
-        with os.fdopen(os.open(filename, os.O_WRONLY | os.O_CREAT, 0o640), 'w') as wgfile:
+        with os.fdopen(os.open(filename, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o640), 'w') as wgfile:
             wgfile.writelines(line + '\n' for line in self.lines)
 
     @staticmethod
@@ -84,6 +84,7 @@ class WGConfig(object):
             else: # close peer section
                 peername = section_data.get(self.keyattr)
                 self._peers[peername] = section_data
+            section_data[self.SECTION_RAW] = self.lines[section_data[self.SECTION_FIRSTLINE]:(section_data[self.SECTION_LASTLINE] + 1)]
 
         self._interface = dict()
         self._peers = dict()
@@ -151,13 +152,6 @@ class WGConfig(object):
             raise KeyError('The peer to be deleted does not exist')
         section_firstline = self.peers[key][self.SECTION_FIRSTLINE]
         section_lastline = self.peers[key][self.SECTION_LASTLINE]
-        # Remove comments directly before the peer section
-        while section_firstline > 0:
-            line = self.lines[section_firstline - 1].strip()
-            if (len(line) > 0) and (line[0] == '#'):
-                section_firstline -= 1
-            else:
-                break
         # Remove a blank line directly before the peer section
         if section_firstline > 0:
             if len(self.lines[section_firstline - 1]) == 0:
