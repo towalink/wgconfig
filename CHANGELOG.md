@@ -10,11 +10,25 @@ All notable changes to this project are documented in this file.
 
 ### Changed
 
-- Properly handle comments at begin and end of sections in line indices
+- n/a
 
 ### Fixed
 
 - n/a
+
+## [0.2.0] - 2020-11-10
+
+### Added
+
+- Added internal "_rawdata" section attribute.
+
+### Changed
+
+- Properly handle comments at begin and end of sections in line indices (this changes behavior of attributes "_index_firstline" and "_index_firstline" in these cases)
+
+### Fixed
+
+- Truncate WireGuard config files before writing changes.
 
 ## [0.1.4] - 2020-11-07
 
@@ -24,6 +38,7 @@ All notable changes to this project are documented in this file.
 
 ### Changed
 
+- Create WireGuard config files without world readable permissions.
 - Formatting improvements.
 
 ### Fixed
