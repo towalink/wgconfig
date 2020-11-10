@@ -105,10 +105,11 @@ class WGConfig(object):
                 section_data = dict()
                 section = line[1:].partition(']')[0].lower()
                 if last_empty_line_in_section is None:
-                    section_data[self.SECTION_FIRSTLINE] = section_data[self.SECTION_LASTLINE] = [i]
+                    section_data[self.SECTION_FIRSTLINE] = [i]
                 else:
-                    section_data[self.SECTION_FIRSTLINE] = section_data[self.SECTION_LASTLINE] = [last_empty_line_in_section + 1]
+                    section_data[self.SECTION_FIRSTLINE] = [last_empty_line_in_section + 1]
                     last_empty_line_in_section = None
+                section_data[self.SECTION_LASTLINE] = [i]
                 if not section in ['interface', 'peer']:
                     raise ValueError(f'Unsupported section [{section}] in line {i}')
             elif line.startswith('#'):
@@ -180,6 +181,7 @@ class WGConfig(object):
     def add_attr(self, key, attr, value, leading_comment=None, append_as_line=False):
         """Adds an attribute/value pair to the given peer ("None" for adding an interface attribute)"""
         section_firstline, section_lastline = self.get_sectioninfo(key)
+        print(key, section_firstline, section_lastline, dict(enumerate(self.lines))) # ***
         if leading_comment is not None:
             if leading_comment.strip()[0] != '#':
                 raise ValueError('A comment needs to start with a "#"')

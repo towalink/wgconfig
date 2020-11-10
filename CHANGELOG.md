@@ -16,6 +16,12 @@ All notable changes to this project are documented in this file.
 
 - n/a
 
+## [0.2.1] - 2020-11-11
+
+### Fixed
+
+- Initializing file with comment before interface section is handled properly again.
+
 ## [0.2.0] - 2020-11-10
 
 ### Added

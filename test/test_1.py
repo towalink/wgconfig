@@ -84,7 +84,7 @@ def test_initialize_file_with_comment(setup_testconfig1):
     wc.initialize_file('# Leading comment for interface section')
     output_data(wc)
     interface = {'_index_firstline': 0,
-                 '_index_lastline': 0}
+                 '_index_lastline': 1}
     del wc.interface['_rawdata']
     assert wc.interface == interface
     for peer in wc.peers.values():
