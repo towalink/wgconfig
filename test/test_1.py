@@ -42,8 +42,9 @@ def test_expected_interface_data(setup_testconfig1):
     interface = {'Address': 'fe80::1/64',
                  'ListenPort': 51820,
                  'PrivateKey': '6FYKQKEtGFAb5HSwyj5cQl3wgS1E9d6SqVjdVksOn2s=',
-                 '_index_firstline': 1,
+                 '_index_firstline': 0,
                  '_index_lastline': 6}
+    del wc.interface['_rawdata']
     assert wc.interface == interface, 'interface data needs to be correctly parsed'
     
 def test_expected_peer_data(setup_testconfig1):
@@ -63,6 +64,8 @@ def test_expected_peer_data(setup_testconfig1):
                                                              'PublicKey': 'eBvBVLo6wH0XkBfIjeLPf8ydBTfU/gMqJOH4nmVXcDE=',
                                                              '_index_firstline': 17,
                                                              '_index_lastline': 24}}
+    for peer in wc.peers.values():
+        del peer['_rawdata']
     assert wc.peers == peers, 'data of peers needs to be correctly parsed'
 
 def test_initialize_file(setup_testconfig1):
@@ -70,16 +73,22 @@ def test_initialize_file(setup_testconfig1):
     wc.initialize_file()
     interface = {'_index_firstline': 0,
                  '_index_lastline': 0}
+    del wc.interface['_rawdata']
     assert wc.interface == interface
+    for peer in wc.peers.values():
+        del peer['_rawdata']
     assert wc.peers == dict()
 
 def test_initialize_file_with_comment(setup_testconfig1):
     wc = setup_testconfig1
     wc.initialize_file('# Leading comment for interface section')
     output_data(wc)
-    interface = {'_index_firstline': 1,
-                 '_index_lastline': 1}
+    interface = {'_index_firstline': 0,
+                 '_index_lastline': 0}
+    del wc.interface['_rawdata']
     assert wc.interface == interface
+    for peer in wc.peers.values():
+        del peer['_rawdata']
     assert wc.peers == dict()
 
 def test_add_interface_attr(setup_testconfig1):
@@ -90,8 +99,9 @@ def test_add_interface_attr(setup_testconfig1):
                  'ListenPort': 51820,
                  'PrivateKey': '6FYKQKEtGFAb5HSwyj5cQl3wgS1E9d6SqVjdVksOn2s=',
                  'TestAttr': 42,
-                 '_index_firstline': 1,
+                 '_index_firstline': 0,
                  '_index_lastline': 7}
+    del wc.interface['_rawdata']
     assert wc.interface == interface
 
 def test_add_interface_attr_with_comment(setup_testconfig1):
@@ -102,8 +112,9 @@ def test_add_interface_attr_with_comment(setup_testconfig1):
                  'ListenPort': 51820,
                  'PrivateKey': '6FYKQKEtGFAb5HSwyj5cQl3wgS1E9d6SqVjdVksOn2s=',
                  'TestAttr': 42,
-                 '_index_firstline': 1,
+                 '_index_firstline': 0,
                  '_index_lastline': 8}
+    del wc.interface['_rawdata']
     assert wc.interface == interface
 
 def test_del_interface_attr1(setup_testconfig1):
@@ -112,8 +123,9 @@ def test_del_interface_attr1(setup_testconfig1):
     output_data(wc)
     interface = {'Address': 'fe80::1/64',
                  'PrivateKey': '6FYKQKEtGFAb5HSwyj5cQl3wgS1E9d6SqVjdVksOn2s=',
-                 '_index_firstline': 1,
+                 '_index_firstline': 0,
                  '_index_lastline': 5}
+    del wc.interface['_rawdata']
     assert wc.interface == interface
 
 def test_del_interface_attr2(setup_testconfig1):
@@ -122,8 +134,9 @@ def test_del_interface_attr2(setup_testconfig1):
     output_data(wc)
     interface = {'Address': 'fe80::1/64',
                  'PrivateKey': '6FYKQKEtGFAb5HSwyj5cQl3wgS1E9d6SqVjdVksOn2s=',
-                 '_index_firstline': 1,
+                 '_index_firstline': 0,
                  '_index_lastline': 5}
+    del wc.interface['_rawdata']
     assert wc.interface == interface
 
 def test_del_interface_attr_with_comment(setup_testconfig1):
@@ -132,8 +145,9 @@ def test_del_interface_attr_with_comment(setup_testconfig1):
     output_data(wc)
     interface = {'Address': 'fe80::1/64',
                  'PrivateKey': '6FYKQKEtGFAb5HSwyj5cQl3wgS1E9d6SqVjdVksOn2s=',
-                 '_index_firstline': 1,
+                 '_index_firstline': 0,
                  '_index_lastline': 4}
+    del wc.interface['_rawdata']
     assert wc.interface == interface
 
 def test_add_peer(setup_testconfig1):
@@ -157,6 +171,8 @@ def test_add_peer(setup_testconfig1):
              '801mgm2JhjTOCxfihEknzFJGYxDvi+8oVYBrWe3hOWM=': {'PublicKey': '801mgm2JhjTOCxfihEknzFJGYxDvi+8oVYBrWe3hOWM=',
                                                              '_index_firstline': 26,
                                                              '_index_lastline': 27}}
+    for peer in wc.peers.values():
+        del peer['_rawdata']
     assert wc.peers == peers, 'peer incorrectly added'
 
 def test_add_peer_with_comment(setup_testconfig1):
@@ -180,6 +196,8 @@ def test_add_peer_with_comment(setup_testconfig1):
              '801mgm2JhjTOCxfihEknzFJGYxDvi+8oVYBrWe3hOWM=': {'PublicKey': '801mgm2JhjTOCxfihEknzFJGYxDvi+8oVYBrWe3hOWM=',
                                                              '_index_firstline': 26,
                                                              '_index_lastline': 28}}
+    for peer in wc.peers.values():
+        del peer['_rawdata']
     assert wc.peers == peers, 'peer (with comment) incorrectly added'
 
 def test_del_peer1(setup_testconfig1):
@@ -193,12 +211,15 @@ def test_del_peer1(setup_testconfig1):
                                                              'PublicKey': 'eBvBVLo6wH0XkBfIjeLPf8ydBTfU/gMqJOH4nmVXcDE=',
                                                              '_index_firstline': 8,
                                                              '_index_lastline': 15}}
+    for peer in wc.peers.values():
+        del peer['_rawdata']
     assert wc.peers == peers, 'first peer incorrectly deleted'
     interface = {'Address': 'fe80::1/64',
                  'ListenPort': 51820,
                  'PrivateKey': '6FYKQKEtGFAb5HSwyj5cQl3wgS1E9d6SqVjdVksOn2s=',
-                 '_index_firstline': 1,
+                 '_index_firstline': 0,
                  '_index_lastline': 6}
+    del wc.interface['_rawdata']
     assert wc.interface == interface, 'first peer incorrectly deleted'
 
 def test_del_peer2(setup_testconfig1):
@@ -212,12 +233,15 @@ def test_del_peer2(setup_testconfig1):
                                                              'PublicKey': 'XWItB4SR1qwGbGn59oRE6TBlTYHQF0pDy1x63dlr5nA=',
                                                              '_index_firstline': 8,
                                                              '_index_lastline': 15}}
+    for peer in wc.peers.values():
+        del peer['_rawdata']
     assert wc.peers == peers, 'second peer incorrectly deleted'
     interface = {'Address': 'fe80::1/64',
                  'ListenPort': 51820,
                  'PrivateKey': '6FYKQKEtGFAb5HSwyj5cQl3wgS1E9d6SqVjdVksOn2s=',
-                 '_index_firstline': 1,
+                 '_index_firstline': 0,
                  '_index_lastline': 6}
+    del wc.interface['_rawdata']
     assert wc.interface == interface, 'second peer incorrectly deleted'
 
 def test_add_attr1(setup_testconfig1):
@@ -240,6 +264,8 @@ def test_add_attr1(setup_testconfig1):
                                                              'PublicKey': 'eBvBVLo6wH0XkBfIjeLPf8ydBTfU/gMqJOH4nmVXcDE=',
                                                              '_index_firstline': 17,
                                                              '_index_lastline': 24}}
+    for peer in wc.peers.values():
+        del peer['_rawdata']
     assert wc.peers == peers
 
 def test_add_attr2(setup_testconfig1):
@@ -262,6 +288,8 @@ def test_add_attr2(setup_testconfig1):
                                                              'PublicKey': 'eBvBVLo6wH0XkBfIjeLPf8ydBTfU/gMqJOH4nmVXcDE=',
                                                              '_index_firstline': 18,
                                                              '_index_lastline': 25}}
+    for peer in wc.peers.values():
+        del peer['_rawdata']
     assert wc.peers == peers
 
 def test_add_attr3(setup_testconfig1):
@@ -284,6 +312,8 @@ def test_add_attr3(setup_testconfig1):
                                                              'PublicKey': 'eBvBVLo6wH0XkBfIjeLPf8ydBTfU/gMqJOH4nmVXcDE=',
                                                              '_index_firstline': 17,
                                                              '_index_lastline': 25}}
+    for peer in wc.peers.values():
+        del peer['_rawdata']
     assert wc.peers == peers
 
 def test_add_attr4(setup_testconfig1):
@@ -306,6 +336,8 @@ def test_add_attr4(setup_testconfig1):
                                                              'PublicKey': 'eBvBVLo6wH0XkBfIjeLPf8ydBTfU/gMqJOH4nmVXcDE=',
                                                              '_index_firstline': 17,
                                                              '_index_lastline': 26}}
+    for peer in wc.peers.values():
+        del peer['_rawdata']
     assert wc.peers == peers
 
 def test_add_attr5(setup_testconfig1):
@@ -328,6 +360,8 @@ def test_add_attr5(setup_testconfig1):
                                                              'TestAttr': 42,
                                                              '_index_firstline': 17,
                                                              '_index_lastline': 25}}
+    for peer in wc.peers.values():
+        del peer['_rawdata']
     assert wc.peers == peers
 
 def test_add_attr6(setup_testconfig1):
@@ -350,6 +384,8 @@ def test_add_attr6(setup_testconfig1):
                                                              'TestAttr': 42,
                                                              '_index_firstline': 17,
                                                              '_index_lastline': 26}}
+    for peer in wc.peers.values():
+        del peer['_rawdata']
     assert wc.peers == peers
 
 def test_del_attr1(setup_testconfig1):
@@ -369,6 +405,8 @@ def test_del_attr1(setup_testconfig1):
                                                              'PublicKey': 'eBvBVLo6wH0XkBfIjeLPf8ydBTfU/gMqJOH4nmVXcDE=',
                                                              '_index_firstline': 16,
                                                              '_index_lastline': 23}}
+    for peer in wc.peers.values():
+        del peer['_rawdata']
     assert wc.peers == peers
 
 def test_del_attr2(setup_testconfig1):
@@ -388,6 +426,8 @@ def test_del_attr2(setup_testconfig1):
                                                              'PublicKey': 'eBvBVLo6wH0XkBfIjeLPf8ydBTfU/gMqJOH4nmVXcDE=',
                                                              '_index_firstline': 17,
                                                              '_index_lastline': 22}}
+    for peer in wc.peers.values():
+        del peer['_rawdata']
     assert wc.peers == peers
 
 def test_del_attr3(setup_testconfig1):
@@ -408,6 +448,8 @@ def test_del_attr3(setup_testconfig1):
                                                              'PublicKey': 'eBvBVLo6wH0XkBfIjeLPf8ydBTfU/gMqJOH4nmVXcDE=',
                                                              '_index_firstline': 17,
                                                              '_index_lastline': 22}}
+    for peer in wc.peers.values():
+        del peer['_rawdata']
     assert wc.peers == peers
 
 def test_del_attr4(setup_testconfig1):
@@ -428,6 +470,8 @@ def test_del_attr4(setup_testconfig1):
                                                              'PublicKey': 'eBvBVLo6wH0XkBfIjeLPf8ydBTfU/gMqJOH4nmVXcDE=',
                                                              '_index_firstline': 17,
                                                              '_index_lastline': 23}}
+    for peer in wc.peers.values():
+        del peer['_rawdata']
     assert wc.peers == peers
 
 def test_del_attr5(setup_testconfig1):
@@ -448,6 +492,8 @@ def test_del_attr5(setup_testconfig1):
                                                              'PublicKey': 'eBvBVLo6wH0XkBfIjeLPf8ydBTfU/gMqJOH4nmVXcDE=',
                                                              '_index_firstline': 17,
                                                              '_index_lastline': 24}}
+    for peer in wc.peers.values():
+        del peer['_rawdata']
     assert wc.peers == peers
     
 def test_del_attr6(setup_testconfig1):
@@ -468,6 +514,8 @@ def test_del_attr6(setup_testconfig1):
                                                              'PublicKey': 'eBvBVLo6wH0XkBfIjeLPf8ydBTfU/gMqJOH4nmVXcDE=',
                                                              '_index_firstline': 17,
                                                              '_index_lastline': 23}}
+    for peer in wc.peers.values():
+        del peer['_rawdata']
     assert wc.peers == peers
     
 def test_del_attr7(setup_testconfig1):
@@ -488,4 +536,6 @@ def test_del_attr7(setup_testconfig1):
                                                              'PublicKey': 'eBvBVLo6wH0XkBfIjeLPf8ydBTfU/gMqJOH4nmVXcDE=',
                                                              '_index_firstline': 17,
                                                              '_index_lastline': 23}}
+    for peer in wc.peers.values():
+        del peer['_rawdata']
     assert wc.peers == peers
