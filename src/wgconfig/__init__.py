@@ -2,6 +2,13 @@
 
 """wgconfig.py: A class for parsing and writing Wireguard configuration files."""
 
+from __future__ import with_statement
+from __future__ import absolute_import
+from __future__ import print_function
+from builtins import str
+from builtins import range
+from builtins import object
+from io import open
 __author__ = "Dirk Henrici"
 __license__ = "AGPL" # + author has right to release in parallel under different licenses
 __email__ = "towalink.wgconfig@henrici.name"
@@ -60,7 +67,7 @@ class WGConfig(object):
         attr, _, value = line.partition('=')
         attr = attr.strip()
         parts = value.partition('#')
-        value = parts[0].strip() # strip comments and whitespace
+        value = str(parts[0].strip()) # strip comments and whitespace
         comment = parts[1] + parts[2]
         if value.isnumeric():
             value = [int(value)]
@@ -76,7 +83,7 @@ class WGConfig(object):
         #_index_lastline: Line (zero indexed) of the last attribute line of the section (including any directly following comments)
 
         def close_section(section, section_data):
-            section_data = {k: (v if len(v) > 1 else v[0]) for k, v in section_data.items()}
+            section_data = dict((k, (v if len(v) > 1 else v[0])) for k, v in list(section_data.items()))
             if section is None: # nothing to close on first section
                 return
             elif section == 'interface': # close interface section
@@ -111,7 +118,7 @@ class WGConfig(object):
                     last_empty_line_in_section = None
                 section_data[self.SECTION_LASTLINE] = [i]
                 if not section in ['interface', 'peer']:
-                    raise ValueError(f'Unsupported section [{section}] in line {i}')
+                    raise ValueError('Unsupported section [%s] in line %d'%(section,i))
             elif line.startswith('#'):
                 section_data[self.SECTION_LASTLINE] = [i]
             else: # regular line
@@ -143,7 +150,7 @@ class WGConfig(object):
         self.handle_leading_comment(leading_comment) # add leading comment if needed
         # Append peer with key attribute
         self.lines.append('[Peer]')
-        self.lines.append(f'{self.keyattr} = {key}')
+        self.lines.append('%s = %s'%(self.keyattr,key))
         # Invalidate data cache
         self.invalidate_data()
 
@@ -195,7 +202,7 @@ class WGConfig(object):
         if (line_found is None) or append_as_line:
             line_found = section_lastline if (line_found is None) else line_found
             line_found += 1
-            self.lines.insert(line_found, f'{attr} = {value}')
+            self.lines.insert(line_found, '%s = %s'%(attr,value))
         else:
             line_attr, line_value, line_comment = self.parse_line(self.lines[line_found])
             line_value.append(value)

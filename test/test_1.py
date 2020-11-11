@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import contextlib
+from __future__ import with_statement
+from __future__ import absolute_import
+from __future__ import print_function
 import filecmp
 import os
 import pprint
@@ -19,7 +21,12 @@ def setup_testconfig1(scope='module'):
     wc = wgconfig.WGConfig(file=TESTFILE1)
     wc.read_file()
     yield wc
-    with contextlib.suppress(FileNotFoundError):
+    # python2 compatibility
+    #   - no FileNotFoundError 
+    #   - no contextlib.suppres()
+    # import contextlib
+    # with contextlib.suppress(FileNotFoundError):
+    if os.path.exists(TESTFILE1_SAVED):
         os.unlink(TESTFILE1_SAVED)
 
 def output_data(wc):
@@ -64,7 +71,7 @@ def test_expected_peer_data(setup_testconfig1):
                                                              'PublicKey': 'eBvBVLo6wH0XkBfIjeLPf8ydBTfU/gMqJOH4nmVXcDE=',
                                                              '_index_firstline': 17,
                                                              '_index_lastline': 24}}
-    for peer in wc.peers.values():
+    for peer in list(wc.peers.values()):
         del peer['_rawdata']
     assert wc.peers == peers, 'data of peers needs to be correctly parsed'
 
@@ -75,7 +82,7 @@ def test_initialize_file(setup_testconfig1):
                  '_index_lastline': 0}
     del wc.interface['_rawdata']
     assert wc.interface == interface
-    for peer in wc.peers.values():
+    for peer in list(wc.peers.values()):
         del peer['_rawdata']
     assert wc.peers == dict()
 
@@ -87,7 +94,7 @@ def test_initialize_file_with_comment(setup_testconfig1):
                  '_index_lastline': 1}
     del wc.interface['_rawdata']
     assert wc.interface == interface
-    for peer in wc.peers.values():
+    for peer in list(wc.peers.values()):
         del peer['_rawdata']
     assert wc.peers == dict()
 
@@ -171,7 +178,7 @@ def test_add_peer(setup_testconfig1):
              '801mgm2JhjTOCxfihEknzFJGYxDvi+8oVYBrWe3hOWM=': {'PublicKey': '801mgm2JhjTOCxfihEknzFJGYxDvi+8oVYBrWe3hOWM=',
                                                              '_index_firstline': 26,
                                                              '_index_lastline': 27}}
-    for peer in wc.peers.values():
+    for peer in list(wc.peers.values()):
         del peer['_rawdata']
     assert wc.peers == peers, 'peer incorrectly added'
 
@@ -196,7 +203,7 @@ def test_add_peer_with_comment(setup_testconfig1):
              '801mgm2JhjTOCxfihEknzFJGYxDvi+8oVYBrWe3hOWM=': {'PublicKey': '801mgm2JhjTOCxfihEknzFJGYxDvi+8oVYBrWe3hOWM=',
                                                              '_index_firstline': 26,
                                                              '_index_lastline': 28}}
-    for peer in wc.peers.values():
+    for peer in list(wc.peers.values()):
         del peer['_rawdata']
     assert wc.peers == peers, 'peer (with comment) incorrectly added'
 
@@ -211,7 +218,7 @@ def test_del_peer1(setup_testconfig1):
                                                              'PublicKey': 'eBvBVLo6wH0XkBfIjeLPf8ydBTfU/gMqJOH4nmVXcDE=',
                                                              '_index_firstline': 8,
                                                              '_index_lastline': 15}}
-    for peer in wc.peers.values():
+    for peer in list(wc.peers.values()):
         del peer['_rawdata']
     assert wc.peers == peers, 'first peer incorrectly deleted'
     interface = {'Address': 'fe80::1/64',
@@ -233,7 +240,7 @@ def test_del_peer2(setup_testconfig1):
                                                              'PublicKey': 'XWItB4SR1qwGbGn59oRE6TBlTYHQF0pDy1x63dlr5nA=',
                                                              '_index_firstline': 8,
                                                              '_index_lastline': 15}}
-    for peer in wc.peers.values():
+    for peer in list(wc.peers.values()):
         del peer['_rawdata']
     assert wc.peers == peers, 'second peer incorrectly deleted'
     interface = {'Address': 'fe80::1/64',
@@ -264,7 +271,7 @@ def test_add_attr1(setup_testconfig1):
                                                              'PublicKey': 'eBvBVLo6wH0XkBfIjeLPf8ydBTfU/gMqJOH4nmVXcDE=',
                                                              '_index_firstline': 17,
                                                              '_index_lastline': 24}}
-    for peer in wc.peers.values():
+    for peer in list(wc.peers.values()):
         del peer['_rawdata']
     assert wc.peers == peers
 
@@ -288,7 +295,7 @@ def test_add_attr2(setup_testconfig1):
                                                              'PublicKey': 'eBvBVLo6wH0XkBfIjeLPf8ydBTfU/gMqJOH4nmVXcDE=',
                                                              '_index_firstline': 18,
                                                              '_index_lastline': 25}}
-    for peer in wc.peers.values():
+    for peer in list(wc.peers.values()):
         del peer['_rawdata']
     assert wc.peers == peers
 
@@ -312,7 +319,7 @@ def test_add_attr3(setup_testconfig1):
                                                              'PublicKey': 'eBvBVLo6wH0XkBfIjeLPf8ydBTfU/gMqJOH4nmVXcDE=',
                                                              '_index_firstline': 17,
                                                              '_index_lastline': 25}}
-    for peer in wc.peers.values():
+    for peer in list(wc.peers.values()):
         del peer['_rawdata']
     assert wc.peers == peers
 
@@ -336,7 +343,7 @@ def test_add_attr4(setup_testconfig1):
                                                              'PublicKey': 'eBvBVLo6wH0XkBfIjeLPf8ydBTfU/gMqJOH4nmVXcDE=',
                                                              '_index_firstline': 17,
                                                              '_index_lastline': 26}}
-    for peer in wc.peers.values():
+    for peer in list(wc.peers.values()):
         del peer['_rawdata']
     assert wc.peers == peers
 
@@ -360,7 +367,7 @@ def test_add_attr5(setup_testconfig1):
                                                              'TestAttr': 42,
                                                              '_index_firstline': 17,
                                                              '_index_lastline': 25}}
-    for peer in wc.peers.values():
+    for peer in list(wc.peers.values()):
         del peer['_rawdata']
     assert wc.peers == peers
 
@@ -384,7 +391,7 @@ def test_add_attr6(setup_testconfig1):
                                                              'TestAttr': 42,
                                                              '_index_firstline': 17,
                                                              '_index_lastline': 26}}
-    for peer in wc.peers.values():
+    for peer in list(wc.peers.values()):
         del peer['_rawdata']
     assert wc.peers == peers
 
@@ -405,7 +412,7 @@ def test_del_attr1(setup_testconfig1):
                                                              'PublicKey': 'eBvBVLo6wH0XkBfIjeLPf8ydBTfU/gMqJOH4nmVXcDE=',
                                                              '_index_firstline': 16,
                                                              '_index_lastline': 23}}
-    for peer in wc.peers.values():
+    for peer in list(wc.peers.values()):
         del peer['_rawdata']
     assert wc.peers == peers
 
@@ -426,7 +433,7 @@ def test_del_attr2(setup_testconfig1):
                                                              'PublicKey': 'eBvBVLo6wH0XkBfIjeLPf8ydBTfU/gMqJOH4nmVXcDE=',
                                                              '_index_firstline': 17,
                                                              '_index_lastline': 22}}
-    for peer in wc.peers.values():
+    for peer in list(wc.peers.values()):
         del peer['_rawdata']
     assert wc.peers == peers
 
@@ -448,7 +455,7 @@ def test_del_attr3(setup_testconfig1):
                                                              'PublicKey': 'eBvBVLo6wH0XkBfIjeLPf8ydBTfU/gMqJOH4nmVXcDE=',
                                                              '_index_firstline': 17,
                                                              '_index_lastline': 22}}
-    for peer in wc.peers.values():
+    for peer in list(wc.peers.values()):
         del peer['_rawdata']
     assert wc.peers == peers
 
@@ -470,7 +477,7 @@ def test_del_attr4(setup_testconfig1):
                                                              'PublicKey': 'eBvBVLo6wH0XkBfIjeLPf8ydBTfU/gMqJOH4nmVXcDE=',
                                                              '_index_firstline': 17,
                                                              '_index_lastline': 23}}
-    for peer in wc.peers.values():
+    for peer in list(wc.peers.values()):
         del peer['_rawdata']
     assert wc.peers == peers
 
@@ -492,7 +499,7 @@ def test_del_attr5(setup_testconfig1):
                                                              'PublicKey': 'eBvBVLo6wH0XkBfIjeLPf8ydBTfU/gMqJOH4nmVXcDE=',
                                                              '_index_firstline': 17,
                                                              '_index_lastline': 24}}
-    for peer in wc.peers.values():
+    for peer in list(wc.peers.values()):
         del peer['_rawdata']
     assert wc.peers == peers
     
@@ -514,7 +521,7 @@ def test_del_attr6(setup_testconfig1):
                                                              'PublicKey': 'eBvBVLo6wH0XkBfIjeLPf8ydBTfU/gMqJOH4nmVXcDE=',
                                                              '_index_firstline': 17,
                                                              '_index_lastline': 23}}
-    for peer in wc.peers.values():
+    for peer in list(wc.peers.values()):
         del peer['_rawdata']
     assert wc.peers == peers
     
@@ -536,6 +543,6 @@ def test_del_attr7(setup_testconfig1):
                                                              'PublicKey': 'eBvBVLo6wH0XkBfIjeLPf8ydBTfU/gMqJOH4nmVXcDE=',
                                                              '_index_firstline': 17,
                                                              '_index_lastline': 23}}
-    for peer in wc.peers.values():
+    for peer in list(wc.peers.values()):
         del peer['_rawdata']
     assert wc.peers == peers

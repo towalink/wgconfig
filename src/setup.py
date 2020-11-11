@@ -17,7 +17,6 @@ setup_kwargs = {
     'packages': setuptools.find_packages(),
     'classifiers': [
         'Programming Language :: Python',
-        'Programming Language :: Python :: 3',
         'License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)',
         'Operating System :: POSIX :: Linux',
         'Development Status :: 5 - Production/Stable',
@@ -25,7 +24,7 @@ setup_kwargs = {
         'Intended Audience :: Developers',
         'Intended Audience :: Information Technology'
     ],
-    'python_requires': '>=3.5',
+    'python_requires': '>=2.7',
     'keywords': 'WireGuard configuration config wg',
     'project_urls': {
         'Repository': 'https://www.github.com/towalink/wgconfig',
