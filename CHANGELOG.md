@@ -16,6 +16,12 @@ All notable changes to this project are documented in this file.
 
 - n/a
 
+## [0.2.2]
+
+### Added
+
+- Support for older Python versions; now 2.7+ is supported; thanks to Marc (https://github.com/marcfiu) for this
+
 ## [0.2.1] - 2020-11-11
 
 ### Fixed

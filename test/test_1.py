@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import contextlib
+# The following imports are for Python2 support only
+from __future__ import absolute_import
+from __future__ import print_function
+
 import filecmp
 import os
 import pprint
@@ -19,7 +22,8 @@ def setup_testconfig1(scope='module'):
     wc = wgconfig.WGConfig(file=TESTFILE1)
     wc.read_file()
     yield wc
-    with contextlib.suppress(FileNotFoundError):
+    #with contextlib.suppress(FileNotFoundError): # not used due to availability in newer Python versions only
+    if os.path.exists(TESTFILE1_SAVED):
         os.unlink(TESTFILE1_SAVED)
 
 def output_data(wc):
