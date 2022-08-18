@@ -16,6 +16,13 @@ All notable changes to this project are documented in this file.
 
 - n/a
 
+## [0.2.3]
+
+### Changed
+
+- Improved formatting in "README.md"
+- Fault tolerant handling of blank lines in "del_attr"
+
 ## [0.2.2]
 
 ### Added

@@ -98,99 +98,103 @@ Please see below for more detailed usage information.
 
 ### Methods for interaction
 
-* __init__(file)
-  Initializes the instance
+* `__init__(file)`
+
+  *Initializes the instance*
   
   Parameters:
-  * file (str): Path of the WireGuard configuration file
+  * "file" (str): Path of the WireGuard configuration file
       You may also just provide the interface name. In this case, the path '/etc/wireguard' is assumed along with a file extension '.conf'.
   
   Examples:
-  * wc = wgconfig.WGConfig('wg0')
-  * wc = wgconfig.WGConfig('/etc/wireguard/wg0.conf')
+  * `wc = wgconfig.WGConfig('wg0')`
+  * `wc = wgconfig.WGConfig('/etc/wireguard/wg0.conf')`
 
-* read_file()
-  Reads the WireGuard config file into memory
+* `read_file()`
+
+  *Reads the WireGuard config file into memory*
         
-* write_file(file)
-  Writes a WireGuard config file from memory to file
+* `write_file(file)`
+
+  *Writes a WireGuard config file from memory to file*
         
   Parameters:
-  * file (str, optional, default: None): Path of the WireGuard configuration file
+  * "file" (str, optional, default: None): Path of the WireGuard configuration file
       You may also just provide the interface name. In this case the path '/etc/wireguard' is assumed along with a file extension '.conf'.
       In case the parameter is missing, the config file defined on object initialization is used.
 
   Examples:
-  * wc.write_file()
-  * wc.write_file('wg0')
-  * wc.write_file('/etc/wireguard/wg0.conf')
+  * `wc.write_file()`
+  * `wc.write_file('wg0')`
+  * `wc.write_file('/etc/wireguard/wg0.conf')`
 
-* initialize_file(leading_comment)
-  Empties the file and adds the interface section header
+* `initialize_file(leading_comment)`
 
-  Parameters:
-  * leading_comment (str, optional, default: None): Comment line to add before the Interface section
-      Must start with a '#' to indicate a comment.
-
-  Examples:
-  * wc.initialize_file()
-  * wc.initialize_file('# Here comes the Interface section:')
-
-* add_peer(key, leading_comment)
-  Adds a new peer with the given (public) key
+  *Empties the file and adds the interface section header*
 
   Parameters:
-  * key (str): Public key of the new peer
-  * leading_comment (str, optional, default: None): Comment line to add before the Peer section
-      Must start with a '#' to indicate a comment.
+  * "leading_comment" (str, optional, default: None): Comment line to be added before the Interface section. Must start with a '#' to indicate a comment.
 
   Examples:
-  * wc.add_peer('801mgm2JhjTOCxfihEknzFJGYxDvi+8oVYBrWe3hOWM=')
-  * wc.add_peer('801mgm2JhjTOCxfihEknzFJGYxDvi+8oVYBrWe3hOWM=', '# Here comes the Interface section:')
+  * `wc.initialize_file()`
+  * `wc.initialize_file('# Here comes the Interface section:')`
 
-* del_peer(key)
-  Removes the peer with the given (public) key
+* `add_peer(key, leading_comment)`
+
+  *Adds a new peer with the given (public) key*
+
+  Parameters:
+  * "key" (str): Public key of the new peer
+  * "leading_comment" (str, optional, default: None): Comment line to be added before the Peer section. Must start with a '#' to indicate a comment.
+
+  Examples:
+  * `wc.add_peer('801mgm2JhjTOCxfihEknzFJGYxDvi+8oVYBrWe3hOWM=')`
+  * `wc.add_peer('801mgm2JhjTOCxfihEknzFJGYxDvi+8oVYBrWe3hOWM=', '# Here comes the Interface section:')`
+
+* `del_peer(key)`
+
+  *Removes the peer with the given (public) key*
   
   Note: Comment lines immediately before the Peer section are removed, too.
   
   Parameters:
-  * key (str): Public key of the peer
+  * "key" (str): Public key of the peer
 
   Examples:
-  * wc.del_peer('801mgm2JhjTOCxfihEknzFJGYxDvi+8oVYBrWe3hOWM=')
+  * `wc.del_peer('801mgm2JhjTOCxfihEknzFJGYxDvi+8oVYBrWe3hOWM=')`
 
-* add_attr(key, attr, value, leading_comment, append_as_line)
-  Adds an attribute/value pair to the given peer ('None' for adding an interface attribute)
+* `add_attr(key, attr, value, leading_comment, append_as_line)`
+
+  *Adds an attribute/value pair to the given peer ('None' for adding an interface attribute)*
   
   Parameters:
-  * key (str): Key of the peer. Set to 'None' to denote the Interface section
-  * attr (str) Name of the attribute to add
-  * value (str or int) Value of the attribute to add
-  * leading_comment (str, optional, default: None): Comment line to add before the Peer section
-      Must start with a '#' to indicate a comment.
-  * append_as_line (bool, optional, default: False): Whether to add the attribute as a new line if another attribute with the same name already exists
-      If "False", adding an attribute that already exists results in comma-separated attribute values. This way, "AllowedIPs" can be added one by one.
+  * "key" (str): Key of the peer. Set to 'None' to denote the Interface section
+  * "attr" (str) Name of the attribute to add
+  * "value" (str or int) Value of the attribute to add
+  * "leading_comment" (str, optional, default: None): Comment line to be added before the Peer section. Must start with a '#' to indicate a comment.
+  * "append_as_line" (bool, optional, default: False): Whether to add the attribute as a new line if another attribute with the same name already exists. If "False", adding an attribute that already exists results in comma-separated attribute values. This way, "AllowedIPs" can be added one by one.
 
   Examples:
-  * wc.add_attr(None, 'ListenPort', '51820')
-  * wc.add_attr('801mgm2JhjTOCxfihEknzFJGYxDvi+8oVYBrWe3hOWM=', 'AllowedIPs', '0.0.0.0/0')
-  * wc.add_attr('801mgm2JhjTOCxfihEknzFJGYxDvi+8oVYBrWe3hOWM=', 'AllowedIPs', '0.0.0.0/0', '# Allow all IPv4 addresses', append_as_line=True)
+  * `wc.add_attr(None, 'ListenPort', '51820')`
+  * `wc.add_attr('801mgm2JhjTOCxfihEknzFJGYxDvi+8oVYBrWe3hOWM=', 'AllowedIPs', '0.0.0.0/0')`
+  * `wc.add_attr('801mgm2JhjTOCxfihEknzFJGYxDvi+8oVYBrWe3hOWM=', 'AllowedIPs', '0.0.0.0/0', '# Allow all IPv4 addresses', append_as_line=True)`
 
-* del_attr(self, key, attr, value, remove_leading_comments)
-  Removes an attribute/value pair from the given peer ('None' for adding an interface attribute); set 'value' to 'None' to remove all values
+* `del_attr(self, key, attr, value, remove_leading_comments)`
+
+  *Removes an attribute/value pair from the given peer ('None' for adding an interface attribute); set 'value' to 'None' to remove all values*
 
   Parameters:
-  * key (str): Key of the peer. Set to 'None' to denote the Interface section
-  * attr (str) Name of the attribute to remove
-  * value (str or int, optional, default: None) Value of the attribute to remove
+  * "key" (str): Key of the peer. Set to 'None' to denote the Interface section
+  * "attr" (str) Name of the attribute to remove
+  * "value" (str or int, optional, default: None) Value of the attribute to remove
       Set to 'None' if all values (either comma-separated or is multiple attribute lines) shall be removed. Otherwise specify the specific value to be removed.
-  * remove_leading_comments (bool, optional, default: True): Indicates whether comment lines before the attribute line(s) shall be removed, too
+  * "remove_leading_comments" (bool, optional, default: True): Indicates whether comment lines before the attribute line(s) shall be removed, too
 
   Examples:
-  * wc.del_attr(None, 'ListenPort')
-  * wc.del_attr('801mgm2JhjTOCxfihEknzFJGYxDvi+8oVYBrWe3hOWM=', 'AllowedIPs')
-  * wc.del_attr('801mgm2JhjTOCxfihEknzFJGYxDvi+8oVYBrWe3hOWM=', 'AllowedIPs', '0.0.0.0/0')
-  * wc.del_attr('801mgm2JhjTOCxfihEknzFJGYxDvi+8oVYBrWe3hOWM=', 'AllowedIPs', '0.0.0.0/0', remove_leading_comments=False)
+  * `wc.del_attr(None, 'ListenPort')`
+  * `wc.del_attr('801mgm2JhjTOCxfihEknzFJGYxDvi+8oVYBrWe3hOWM=', 'AllowedIPs')`
+  * `wc.del_attr('801mgm2JhjTOCxfihEknzFJGYxDvi+8oVYBrWe3hOWM=', 'AllowedIPs', '0.0.0.0/0')`
+  * `wc.del_attr('801mgm2JhjTOCxfihEknzFJGYxDvi+8oVYBrWe3hOWM=', 'AllowedIPs', '0.0.0.0/0', remove_leading_comments=False)`
 
 ---
 
@@ -224,5 +228,5 @@ pytest <path to root of "test" directory>
 [![License](http://img.shields.io/:license-agpl3-blue.svg?style=flat-square)](https://opensource.org/licenses/AGPL-3.0)
 
 - **[AGPL3 license](https://opensource.org/licenses/AGPL-3.0)**
-- Copyright 2020 © <a href="https://github.com/towalink/wgconfig" target="_blank">Dirk Henrici</a>.
+- Copyright 2020-2022 © <a href="https://github.com/towalink/wgconfig" target="_blank">Dirk Henrici</a>.
 - [WireGuard](https://www.wireguard.com/) is a registered trademark of Jason A. Donenfeld.
