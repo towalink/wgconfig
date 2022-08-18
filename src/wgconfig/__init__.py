@@ -245,7 +245,7 @@ class WGConfig():
         if remove_leading_comments:
             i = line_found[0] - 1
             while i > 0:
-                if self.lines[i][0] == '#':
+                if len(self.lines[i]) and (self.lines[i][0] == '#'):
                     del(self.lines[i])
                     i -= 1
                 else:
