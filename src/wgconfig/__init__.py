@@ -21,6 +21,7 @@ import os
 
 class WGConfig():
     """A class for parsing and writing Wireguard configuration files"""
+    SECTION_DISABLED = '_disabled'
     SECTION_FIRSTLINE = '_index_firstline'
     SECTION_LASTLINE = '_index_lastline'
     SECTION_RAW = '_rawdata'
@@ -95,6 +96,11 @@ class WGConfig():
                 peername = section_data.get(self.keyattr)
                 self._peers[peername] = section_data
             section_data[self.SECTION_RAW] = self.lines[section_data[self.SECTION_FIRSTLINE]:(section_data[self.SECTION_LASTLINE] + 1)]
+            # checking if the section is disabled and adding an attribute to section data
+            if section_data[self.SECTION_RAW][0].startswith('#! '):
+                section_data[self.SECTION_DISABLED] = True
+            else:
+                section_data[self.SECTION_DISABLED] = False
 
         self._interface = dict()
         self._peers = dict()
@@ -103,7 +109,7 @@ class WGConfig():
         last_empty_line_in_section = -1 # virtual empty line before start of file
         for i, line in enumerate(self.lines):
             # Ignore leading whitespace and trailing whitespace
-            line = line.strip()
+            line = line.replace('#! ', '').strip()
             # Ignore empty lines and comments
             if len(line) == 0:
                 last_empty_line_in_section = i
@@ -250,6 +256,39 @@ class WGConfig():
                     i -= 1
                 else:
                     break
+        # Invalidate data cache
+        self.invalidate_data()
+
+    def enable_peer(self, key):
+        """Enables the peer with the given (public) key by removing #! from all lines in a peer section"""
+        if key not in self.peers:
+            raise KeyError('The peer to be enabled does not exist')
+        section_firstline = self.peers[key][self.SECTION_FIRSTLINE]
+        section_lastline = self.peers[key][self.SECTION_LASTLINE]
+        result = []
+        # Remove #! from lines
+        for i, line in enumerate(self.lines):
+            if section_firstline <= i <= section_lastline:
+                line = line.replace('#! ', '')
+            result.append(line)
+        self.lines = result
+        # Invalidate data cache
+        self.invalidate_data()
+
+    def disable_peer(self, key):
+        """Disables the peer with the given (public) key by appending #! to all lines in a peer section"""
+        if key not in self.peers:
+            raise KeyError('The peer to be disabled does not exist')
+        section_firstline = self.peers[key][self.SECTION_FIRSTLINE]
+        section_lastline = self.peers[key][self.SECTION_LASTLINE]
+        result = []
+        # Append #! to lines
+        for i, line in enumerate(self.lines):
+            prefix = ''
+            if section_firstline <= i <= section_lastline:
+                prefix = '#! '
+            result.append(prefix + line)
+        self.lines = result
         # Invalidate data cache
         self.invalidate_data()
 
