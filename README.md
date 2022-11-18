@@ -196,6 +196,26 @@ Please see below for more detailed usage information.
   * `wc.del_attr('801mgm2JhjTOCxfihEknzFJGYxDvi+8oVYBrWe3hOWM=', 'AllowedIPs', '0.0.0.0/0')`
   * `wc.del_attr('801mgm2JhjTOCxfihEknzFJGYxDvi+8oVYBrWe3hOWM=', 'AllowedIPs', '0.0.0.0/0', remove_leading_comments=False)`
 
+* `disable_peer(self, key)`
+
+  *Disables the peer with the given (public) key by appending #! to all lines in a peer section*
+
+  Parameters:
+  * "key" (str): Public key of the peer
+  
+  Examples:
+  * `wc.disable_peer('801mgm2JhjTOCxfihEknzFJGYxDvi+8oVYBrWe3hOWM=')`
+
+* `enable_peer(self, key)`
+
+  *Enables the peer with the given (public) key by removing #! from all lines in a peer section*
+
+  Parameters:
+  * "key" (str): Public key of the peer
+  
+  Examples:
+  * `wc.enable_peer('801mgm2JhjTOCxfihEknzFJGYxDvi+8oVYBrWe3hOWM=')`
+
 ---
 
 ## Reporting bugs
