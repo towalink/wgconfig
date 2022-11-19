@@ -7,7 +7,7 @@ with open('README.md', 'r') as f:
 
 setup_kwargs = {
     'name': 'wgconfig',
-    'version': '0.2.3',
+    'version': '0.3.0',
     'author': 'Dirk Henrici',
     'author_email': 'towalink.wgconfig@henrici.name',
     'description': 'parsing and writing WireGuard configuration files',
@@ -19,8 +19,7 @@ setup_kwargs = {
         'Programming Language :: Python',
         'License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)',
         'Operating System :: POSIX :: Linux',
-        'Development Status :: 4 - Beta',
-        #'Development Status :: 5 - Production/Stable',
+        'Development Status :: 5 - Production/Stable',
         'Intended Audience :: System Administrators',
         'Intended Audience :: Developers',
         'Intended Audience :: Information Technology'

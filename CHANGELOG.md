@@ -16,14 +16,29 @@ All notable changes to this project are documented in this file.
 
 - n/a
 
-## [0.2.3]
+## [0.3.0] - 2022-11-19
+
+### Added
+
+- Add method to just retrieve the data of a single peer
+- Add the capability to disable and enable peers (mainly contributed by "subs1stem")
+
+### Fixed
+
+- Tests no longer change internal data structures
+
+### Changed
+
+- Refactored tests to reduce code duplication
+
+## [0.2.3] - 2022-08-22
 
 ### Changed
 
 - Improved formatting in "README.md"
 - Fault tolerant handling of blank lines in "del_attr"
 
-## [0.2.2]
+## [0.2.2] - 2020-11-15
 
 ### Added
 
