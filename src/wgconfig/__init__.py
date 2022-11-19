@@ -96,7 +96,7 @@ class WGConfig():
                 peername = section_data.get(self.keyattr)
                 self._peers[peername] = section_data
             section_data[self.SECTION_RAW] = self.lines[section_data[self.SECTION_FIRSTLINE]:(section_data[self.SECTION_LASTLINE] + 1)]
-            # checking if the section is disabled and adding an attribute to section data
+            # Checking if the section is disabled and adding an attribute to section data
             if section_data[self.SECTION_RAW][0].startswith('#! '):
                 section_data[self.SECTION_DISABLED] = True
             else:
@@ -150,6 +150,17 @@ class WGConfig():
         self.handle_leading_comment(leading_comment) # add leading comment if needed
         self.lines.append('[Interface]')
         self.invalidate_data()
+
+    def get_peer(self, key, include_details=False):
+        """Returns the data of the peer with the given (public) key"""
+        try:
+            peerdata = self.peers[key]
+        except KeyError:
+            raise KeyError('The peer does not exist')
+        # Filter details if needed
+        if not include_details:
+            peerdata = { key: value for key, value in peerdata.items() if not key.startswith('_') }
+        return peerdata
 
     def add_peer(self, key, leading_comment=None):
         """Adds a new peer with the given (public) key"""
@@ -259,6 +270,11 @@ class WGConfig():
         # Invalidate data cache
         self.invalidate_data()
 
+    def get_peer_enabled(self, key):
+        """Checks whether the peer with the given (public) key is enabled"""
+        peerdata = self.get_peer(key, include_details=True)
+        return not peerdata.get(self.SECTION_DISABLED)
+
     def enable_peer(self, key):
         """Enables the peer with the given (public) key by removing #! from all lines in a peer section"""
         if key not in self.peers:
@@ -279,6 +295,8 @@ class WGConfig():
         """Disables the peer with the given (public) key by appending #! to all lines in a peer section"""
         if key not in self.peers:
             raise KeyError('The peer to be disabled does not exist')
+        if not self.get_peer_enabled(key):
+            return; # nothing to do anymore if peer is already disabled
         section_firstline = self.peers[key][self.SECTION_FIRSTLINE]
         section_lastline = self.peers[key][self.SECTION_LASTLINE]
         result = []

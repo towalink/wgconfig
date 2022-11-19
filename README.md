@@ -139,6 +139,22 @@ Please see below for more detailed usage information.
   * `wc.initialize_file()`
   * `wc.initialize_file('# Here comes the Interface section:')`
 
+* `get_peer(key, include_details)`
+
+  *Returns the data of the peer with the given (public) key*
+  
+  Parameters:
+  * "key" (str): Public key of the peer
+  * "include_details" (boolean, optional, default: False): Also include attributes with a leading underscore (e.g. the disabled state or the raw data).
+
+  Examples:
+  * `wc.get_peer('801mgm2JhjTOCxfihEknzFJGYxDvi+8oVYBrWe3hOWM=')`
+  * `wc.get_peer('801mgm2JhjTOCxfihEknzFJGYxDvi+8oVYBrWe3hOWM=', include_details = True)`
+
+  Notes:
+  * Don't forget to call `read_file()` before attempting to get data out of a file
+  * Access the `peers` property if you want to retrieve the data of all peers    
+
 * `add_peer(key, leading_comment)`
 
   *Adds a new peer with the given (public) key*
@@ -198,7 +214,7 @@ Please see below for more detailed usage information.
 
 * `disable_peer(self, key)`
 
-  *Disables the peer with the given (public) key by appending #! to all lines in a peer section*
+  *Disables the peer with the given (public) key by prepending #! to all lines in a peer section*
 
   Parameters:
   * "key" (str): Public key of the peer
@@ -215,6 +231,16 @@ Please see below for more detailed usage information.
   
   Examples:
   * `wc.enable_peer('801mgm2JhjTOCxfihEknzFJGYxDvi+8oVYBrWe3hOWM=')`
+
+* `get_peer_enabled(self, key)`
+
+  *Checks whether the peer with the given (public) key is enabled*
+
+  Parameters:
+  * "key" (str): Public key of the peer
+  
+  Examples:
+  * `wc.get_peer_enabled('801mgm2JhjTOCxfihEknzFJGYxDvi+8oVYBrWe3hOWM=')`
 
 ---
 
