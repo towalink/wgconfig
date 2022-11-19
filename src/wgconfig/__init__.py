@@ -157,8 +157,10 @@ class WGConfig():
             peerdata = self.peers[key]
         except KeyError:
             raise KeyError('The peer does not exist')
-        # Filter details if needed
-        if not include_details:
+        # Make sure to have a separated copy and filter details if needed
+        if include_details:
+            peerdata = peerdata.copy()
+        else:
             peerdata = { key: value for key, value in peerdata.items() if not key.startswith('_') }
         return peerdata
 
