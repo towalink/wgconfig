@@ -28,12 +28,26 @@ def setup_testconfig1(scope='module'):
         os.unlink(TESTFILE1_SAVED)
 
 def output_data(wc):
+    """Provide output that is helpful for debugging purposes"""
     print('LINES:')
     pprint.pprint(list(enumerate(wc.lines)))
     print('INTERFACE:')
     pprint.pprint(wc.interface)
     print('PEERS:')
     pprint.pprint(wc.peers)
+
+def get_peer_property_without_rawdata(wc):
+    """Return the peer property of the provided wgconfig object without providing the _rawdata attribute"""
+    result = copy.deepcopy(wc.peers)
+    for peer in result.values():
+        del peer['_rawdata']
+    return result
+
+def get_interface_property_without_rawdata(wc):
+    """Return the interface property of the provided wgconfig object without providing the _rawdata attribute"""
+    result = copy.deepcopy(wc.interface)
+    del result['_rawdata']
+    return result
 
 def test_saved_file_is_unchanged(setup_testconfig1):
     wc = setup_testconfig1
@@ -50,9 +64,7 @@ def test_expected_interface_data(setup_testconfig1):
                  '_disabled': False,
                  '_index_firstline': 0,
                  '_index_lastline': 6}
-    result = wc.interface.copy()
-    del result['_rawdata']
-    assert result == interface, 'interface data needs to be correctly parsed'
+    assert get_interface_property_without_rawdata(wc) == interface, 'interface data needs to be correctly parsed'
 
 def test_expected_peer_data(setup_testconfig1):
     wc = setup_testconfig1
@@ -81,9 +93,7 @@ def test_expected_peer_data(setup_testconfig1):
                                                               '_disabled': True,
                                                               '_index_firstline': 26,
                                                               '_index_lastline': 32}}
-    for peer in wc.peers.values():
-        del peer['_rawdata']
-    assert wc.peers == peers, 'data of peers needs to be correctly parsed'
+    assert get_peer_property_without_rawdata(wc) == peers, 'data of peers needs to be correctly parsed'
 
 def test_initialize_file(setup_testconfig1):
     wc = setup_testconfig1
@@ -91,13 +101,8 @@ def test_initialize_file(setup_testconfig1):
     interface = {'_disabled': False,
                  '_index_firstline': 0,
                  '_index_lastline': 0}
-    result = wc.interface.copy()
-    del result['_rawdata']
-    assert result == interface
-    result = copy.deepcopy(wc.peers)
-    for peer in result.values():
-        del peer['_rawdata']
-    assert result == dict()
+    assert get_interface_property_without_rawdata(wc) == interface
+    assert get_peer_property_without_rawdata(wc) == dict()
 
 def test_initialize_file_with_comment(setup_testconfig1):
     wc = setup_testconfig1
@@ -106,13 +111,8 @@ def test_initialize_file_with_comment(setup_testconfig1):
     interface = {'_disabled': False,
                  '_index_firstline': 0,
                  '_index_lastline': 1}
-    result = wc.interface.copy()
-    del result['_rawdata']
-    assert result == interface
-    result = copy.deepcopy(wc.peers)
-    for peer in result.values():
-        del peer['_rawdata']
-    assert result == dict()
+    assert get_interface_property_without_rawdata(wc) == interface
+    assert get_peer_property_without_rawdata(wc) == dict()
 
 def test_add_interface_attr(setup_testconfig1):
     wc = setup_testconfig1
@@ -125,9 +125,7 @@ def test_add_interface_attr(setup_testconfig1):
                  '_disabled': False,
                  '_index_firstline': 0,
                  '_index_lastline': 7}
-    result = wc.interface.copy()
-    del result['_rawdata']
-    assert result == interface
+    assert get_interface_property_without_rawdata(wc) == interface
 
 def test_add_interface_attr_with_comment(setup_testconfig1):
     wc = setup_testconfig1
@@ -140,9 +138,7 @@ def test_add_interface_attr_with_comment(setup_testconfig1):
                  '_disabled': False,
                  '_index_firstline': 0,
                  '_index_lastline': 8}
-    result = wc.interface.copy()
-    del result['_rawdata']
-    assert result == interface
+    assert get_interface_property_without_rawdata(wc) == interface
 
 def test_del_interface_attr1(setup_testconfig1):
     wc = setup_testconfig1
@@ -153,9 +149,7 @@ def test_del_interface_attr1(setup_testconfig1):
                  '_disabled': False,
                  '_index_firstline': 0,
                  '_index_lastline': 5}
-    result = wc.interface.copy()
-    del result['_rawdata']
-    assert result == interface
+    assert get_interface_property_without_rawdata(wc) == interface
 
 def test_del_interface_attr2(setup_testconfig1):
     wc = setup_testconfig1
@@ -166,9 +160,7 @@ def test_del_interface_attr2(setup_testconfig1):
                  '_disabled': False,
                  '_index_firstline': 0,
                  '_index_lastline': 5}
-    result = wc.interface.copy()
-    del result['_rawdata']
-    assert result == interface
+    assert get_interface_property_without_rawdata(wc) == interface
 
 def test_del_interface_attr_with_comment(setup_testconfig1):
     wc = setup_testconfig1
@@ -179,9 +171,7 @@ def test_del_interface_attr_with_comment(setup_testconfig1):
                  '_disabled': False,
                  '_index_firstline': 0,
                  '_index_lastline': 4}
-    result = wc.interface.copy()
-    del result['_rawdata']
-    assert result == interface
+    assert get_interface_property_without_rawdata(wc) == interface
 
 def test_get_peer(setup_testconfig1):
     wc = setup_testconfig1
@@ -259,10 +249,7 @@ def test_add_peer(setup_testconfig1):
                                                              '_disabled': False,
                                                              '_index_firstline': 34,
                                                              '_index_lastline': 35}}
-    result = copy.deepcopy(wc.peers)
-    for peer in result.values():
-        del peer['_rawdata']
-    assert result == peers, 'peer incorrectly added'
+    assert get_peer_property_without_rawdata(wc) == peers, 'peer incorrectly added'
 
 def test_add_peer_with_comment(setup_testconfig1):
     wc = setup_testconfig1
@@ -296,10 +283,7 @@ def test_add_peer_with_comment(setup_testconfig1):
                                                              '_disabled': False,
                                                              '_index_firstline': 34,
                                                              '_index_lastline': 36}}
-    result = copy.deepcopy(wc.peers)
-    for peer in result.values():
-        del peer['_rawdata']
-    assert result == peers, 'peer (with comment) incorrectly added'
+    assert get_peer_property_without_rawdata(wc) == peers, 'peer (with comment) incorrectly added'
 
 def test_del_peer1(setup_testconfig1):
     wc = setup_testconfig1
@@ -321,18 +305,14 @@ def test_del_peer1(setup_testconfig1):
                                                               '_disabled': True,
                                                               '_index_firstline': 17,
                                                               '_index_lastline': 23}}
-    result = copy.deepcopy(wc.peers)
-    for peer in result.values():
-        del peer['_rawdata']
-    assert result == peers, 'first peer incorrectly deleted'
+    assert get_peer_property_without_rawdata(wc) == peers, 'first peer incorrectly deleted'
     interface = {'Address': 'fe80::1/64',
                  'ListenPort': 51820,
                  'PrivateKey': '6FYKQKEtGFAb5HSwyj5cQl3wgS1E9d6SqVjdVksOn2s=',
                  '_disabled': False,
                  '_index_firstline': 0,
                  '_index_lastline': 6}
-    del wc.interface['_rawdata']
-    assert wc.interface == interface, 'first peer incorrectly deleted'
+    assert get_interface_property_without_rawdata(wc) == interface, 'first peer incorrectly deleted'
 
 def test_del_peer2(setup_testconfig1):
     wc = setup_testconfig1
@@ -354,18 +334,14 @@ def test_del_peer2(setup_testconfig1):
                                                               '_disabled': True,
                                                               '_index_firstline': 17,
                                                               '_index_lastline': 23}}
-    result = copy.deepcopy(wc.peers)
-    for peer in result.values():
-        del peer['_rawdata']
-    assert result == peers, 'second peer incorrectly deleted'
+    assert get_peer_property_without_rawdata(wc) == peers, 'second peer incorrectly deleted'
     interface = {'Address': 'fe80::1/64',
                  'ListenPort': 51820,
                  'PrivateKey': '6FYKQKEtGFAb5HSwyj5cQl3wgS1E9d6SqVjdVksOn2s=',
                  '_disabled': False,
                  '_index_firstline': 0,
                  '_index_lastline': 6}
-    del wc.interface['_rawdata']
-    assert wc.interface == interface, 'second peer incorrectly deleted'
+    assert get_interface_property_without_rawdata(wc) == interface, 'second peer incorrectly deleted'
 
 def test_add_attr1(setup_testconfig1):
     """add_attr to existing attr with value list"""
@@ -397,10 +373,7 @@ def test_add_attr1(setup_testconfig1):
                                                               '_disabled': True,
                                                               '_index_firstline': 26,
                                                               '_index_lastline': 32}}
-    result = copy.deepcopy(wc.peers)
-    for peer in result.values():
-        del peer['_rawdata']
-    assert result == peers
+    assert get_peer_property_without_rawdata(wc) == peers
 
 def test_add_attr2(setup_testconfig1):
     """add_attr with leading comment to existing attr with value list"""
@@ -432,10 +405,7 @@ def test_add_attr2(setup_testconfig1):
                                                               '_disabled': True,
                                                               '_index_firstline': 27,
                                                               '_index_lastline': 33}}
-    result = copy.deepcopy(wc.peers)
-    for peer in result.values():
-        del peer['_rawdata']
-    assert result == peers
+    assert get_peer_property_without_rawdata(wc) == peers
 
 def test_add_attr3(setup_testconfig1):
     """add_attr to existing attr with existing value(s) as new line"""
@@ -467,10 +437,7 @@ def test_add_attr3(setup_testconfig1):
                                                               '_disabled': True,
                                                               '_index_firstline': 27,
                                                               '_index_lastline': 33}}
-    result = copy.deepcopy(wc.peers)
-    for peer in result.values():
-        del peer['_rawdata']
-    assert result == peers
+    assert get_peer_property_without_rawdata(wc) == peers
 
 def test_add_attr4(setup_testconfig1):
     """add_attr with leading comment to existing attr with existing value(s) as new line"""
@@ -502,10 +469,7 @@ def test_add_attr4(setup_testconfig1):
                                                               '_disabled': True,
                                                               '_index_firstline': 28,
                                                               '_index_lastline': 34}}
-    result = copy.deepcopy(wc.peers)
-    for peer in result.values():
-        del peer['_rawdata']
-    assert result == peers
+    assert get_peer_property_without_rawdata(wc) == peers
 
 def test_add_attr5(setup_testconfig1):
     """add_attr for a not yet present attr (at the end)"""
@@ -537,10 +501,7 @@ def test_add_attr5(setup_testconfig1):
                                                               '_disabled': True,
                                                               '_index_firstline': 27,
                                                               '_index_lastline': 33}}
-    result = copy.deepcopy(wc.peers)
-    for peer in result.values():
-        del peer['_rawdata']
-    assert result == peers
+    assert get_peer_property_without_rawdata(wc) == peers
 
 def test_add_attr6(setup_testconfig1):
     """add_attr with leading comment for a not yet present attr (at the end)"""
@@ -572,10 +533,7 @@ def test_add_attr6(setup_testconfig1):
                                                               '_disabled': True,
                                                               '_index_firstline': 28,
                                                               '_index_lastline': 34}}
-    result = copy.deepcopy(wc.peers)
-    for peer in result.values():
-        del peer['_rawdata']
-    assert result == peers
+    assert get_peer_property_without_rawdata(wc) == peers
 
 def test_del_attr1(setup_testconfig1):
     """del_attr: all attribute occurences where just once present"""
@@ -604,10 +562,7 @@ def test_del_attr1(setup_testconfig1):
                                                               '_disabled': True,
                                                               '_index_firstline': 25,
                                                               '_index_lastline': 31}}
-    result = copy.deepcopy(wc.peers)
-    for peer in result.values():
-        del peer['_rawdata']
-    assert result == peers
+    assert get_peer_property_without_rawdata(wc) == peers
 
 def test_del_attr2(setup_testconfig1):
     """del_attr: all attribute occurences where two lines present"""
@@ -636,10 +591,7 @@ def test_del_attr2(setup_testconfig1):
                                                               '_disabled': True,
                                                               '_index_firstline': 24,
                                                               '_index_lastline': 30}}
-    result = copy.deepcopy(wc.peers)
-    for peer in result.values():
-        del peer['_rawdata']
-    assert result == peers
+    assert get_peer_property_without_rawdata(wc) == peers
 
 def test_del_attr3(setup_testconfig1):
     """del_attr: all attribute occurences with leading comment"""
@@ -669,10 +621,7 @@ def test_del_attr3(setup_testconfig1):
                                                               '_disabled': True,
                                                               '_index_firstline': 24,
                                                               '_index_lastline': 30}}
-    result = copy.deepcopy(wc.peers)
-    for peer in result.values():
-        del peer['_rawdata']
-    assert result == peers
+    assert get_peer_property_without_rawdata(wc) == peers
 
 def test_del_attr4(setup_testconfig1):
     """del_attr: all attribute occurences keeping leading comment"""
@@ -702,10 +651,7 @@ def test_del_attr4(setup_testconfig1):
                                                               '_disabled': True,
                                                               '_index_firstline': 25,
                                                               '_index_lastline': 31}}
-    result = copy.deepcopy(wc.peers)
-    for peer in result.values():
-        del peer['_rawdata']
-    assert result == peers
+    assert get_peer_property_without_rawdata(wc) == peers
 
 def test_del_attr5(setup_testconfig1):
     """del_attr: delete a single value from an attribute where two values are present in a single line"""
@@ -735,10 +681,7 @@ def test_del_attr5(setup_testconfig1):
                                                               '_disabled': True,
                                                               '_index_firstline': 26,
                                                               '_index_lastline': 32}}
-    result = copy.deepcopy(wc.peers)
-    for peer in result.values():
-        del peer['_rawdata']
-    assert result == peers
+    assert get_peer_property_without_rawdata(wc) == peers
 
 def test_del_attr6(setup_testconfig1):
     """del_attr: delete a single value from an attribute where two values are present on separate lines (first line)"""
@@ -768,10 +711,7 @@ def test_del_attr6(setup_testconfig1):
                                                               '_disabled': True,
                                                               '_index_firstline': 25,
                                                               '_index_lastline': 31}}
-    result = copy.deepcopy(wc.peers)
-    for peer in result.values():
-        del peer['_rawdata']
-    assert result == peers
+    assert get_peer_property_without_rawdata(wc) == peers
 
 def test_del_attr7(setup_testconfig1):
     """del_attr: delete a single value from an attribute where two values are present on separate lines (second line)"""
@@ -801,10 +741,7 @@ def test_del_attr7(setup_testconfig1):
                                                               '_disabled': True,
                                                               '_index_firstline': 25,
                                                               '_index_lastline': 31}}
-    result = copy.deepcopy(wc.peers)
-    for peer in result.values():
-        del peer['_rawdata']
-    assert result == peers
+    assert get_peer_property_without_rawdata(wc) == peers
 
 def test_disable_peer1(setup_testconfig1):
     wc = setup_testconfig1
