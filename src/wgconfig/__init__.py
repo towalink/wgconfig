@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""wgconfig.py: A class for parsing and writing Wireguard configuration files."""
+"""wgconfig.py: A class for parsing and writing WireGuard configuration files."""
 
 # The following imports are for Python2 support only
 from __future__ import with_statement
@@ -20,7 +20,7 @@ import os
 
 
 class WGConfig():
-    """A class for parsing and writing Wireguard configuration files"""
+    """A class for parsing and writing WireGuard configuration files"""
     SECTION_DISABLED = '_disabled'
     SECTION_FIRSTLINE = '_index_firstline'
     SECTION_LASTLINE = '_index_lastline'
@@ -50,13 +50,13 @@ class WGConfig():
         self._peers = None
 
     def read_file(self):
-        """Reads the Wireguard config file into memory"""
+        """Reads the WireGuard config file into memory"""
         with open(self.filename, 'r') as wgfile:
             self.lines = [line.rstrip() for line in wgfile.readlines()]
         self.invalidate_data()
 
     def write_file(self, file=None):
-        """Writes a Wireguard config file from memory to file"""
+        """Writes a WireGuard config file from memory to file"""
         if file is None:
             filename = self.filename
         else:
@@ -80,7 +80,7 @@ class WGConfig():
         return attr, value, comment
 
     def parse_lines(self):
-        """Parses the lines of a Wireguard config file into memory"""
+        """Parses the lines of a WireGuard config file into memory"""
 
         # There will be two special attributes in the parsed data:
         #_index_firstline: Line (zero indexed) of the section header (including any leading lines with comments)
@@ -151,18 +151,37 @@ class WGConfig():
         self.lines.append('[Interface]')
         self.invalidate_data()
 
+    def get_filtered_dictionary(self, data, include_details=False):
+        """Return a separated copy of a dictionary and filter private attributes if requested"""
+        if include_details:
+            # Obtain a copy of the complete dictionary
+            data = data.copy()
+        else:
+            # Filter attributes starting with an underscore
+            data = { key: value for key, value in data.items() if not key.startswith('_') }
+        return data    
+
+    def get_interface(self, include_details=False):
+        """Returns the data of the interface section"""
+        return self.get_filtered_dictionary(self.interface, include_details)
+
+    def get_peers(self, keys_only=True, include_disabled=False, include_details=False):
+        """Returns peer data or a list of peers (i.e. their public keys)"""
+        # Get (possibly) filtered peers dictionary
+        peerdata = { key: value for key, value in self.peers.items() if include_disabled or not value.get('_disabled', False) }
+        # Return requested data
+        if keys_only:
+            return list(peerdata.keys())
+        else:
+            return { key: self.get_filtered_dictionary(value, include_details) for key, value in peerdata.items() }
+
     def get_peer(self, key, include_details=False):
         """Returns the data of the peer with the given (public) key"""
         try:
             peerdata = self.peers[key]
         except KeyError:
             raise KeyError('The peer does not exist')
-        # Make sure to have a separated copy and filter details if needed
-        if include_details:
-            peerdata = peerdata.copy()
-        else:
-            peerdata = { key: value for key, value in peerdata.items() if not key.startswith('_') }
-        return peerdata
+        return self.get_filtered_dictionary(peerdata, include_details)
 
     def add_peer(self, key, leading_comment=None):
         """Adds a new peer with the given (public) key"""
@@ -238,7 +257,7 @@ class WGConfig():
         self.invalidate_data()
 
     def del_attr(self, key, attr, value=None, remove_leading_comments=True):
-        """Removes an attribute/value pair from the given peer ("None" for adding an interface attribute); set 'value' to 'None' to remove all values"""
+        """Removes an attribute/value pair from the given peer ("None" for removing an interface attribute); set 'value' to 'None' to remove all values"""
         section_firstline, section_lastline = self.get_sectioninfo(key)
         # Find all lines with matching attribute name and (if requested) value
         line_found = []
