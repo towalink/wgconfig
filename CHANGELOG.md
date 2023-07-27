@@ -16,6 +16,18 @@ All notable changes to this project are documented in this file.
 
 - n/a
 
+## [1.0.0] - 2023-07-27
+
+### Added
+
+- Add method for flexibly returning the attributes and values of the interface section
+- Add method for flexibly returning the peers and optionally the peers' data
+
+### Changed
+
+- Rework documentation in README.md
+- Add a Jupityer Notebook as additional documentation
+
 ## [0.3.0] - 2022-11-19
 
 ### Added

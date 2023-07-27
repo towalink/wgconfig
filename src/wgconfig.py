@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-"""wgconfig.py: parsing and writing Wireguard configuration files."""
+"""wgconfig.py: parsing and writing WireGuard configuration files."""
 
 """
 The Towalink Project
-Copyright (C) 2020-2022 Dirk Henrici
+Copyright (C) 2020-2023 Dirk Henrici
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
