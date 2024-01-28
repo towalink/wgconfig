@@ -78,7 +78,7 @@ print('LIST OF PEERS (there are no peers yet):', wc.get_peers())
 print('ALL PEER DATA (there are no peers yet):', wc.get_peers(keys_only=False))
 ```
 
-The module also contains simple wrappers around the wg command to generate and manage keys:
+The module also contains simple wrappers around the wg command (contained in WireGuard tools) to generate and manage keys:
 
 ```python
 import wgconfig.wgexec as wgexec

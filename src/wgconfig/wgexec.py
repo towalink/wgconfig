@@ -30,10 +30,22 @@ def execute(command, input=None, suppressoutput=False, suppresserrors=False):
         print(out)
     nsp.wait()
     return out, err, nsp.returncode
-    
+
+def execute_wgtools(command, input=None):
+    """Execute a command from WireGuard tools"""
+    try:
+        return execute(command, input=input, suppressoutput=True)
+    except FileNotFoundError as e:
+        note = 'You need to have WireGuard tools installed for this action to succeed'
+        if hasattr(e, 'add_note'):  # Python 3.11+ ?
+            e.add_note('You need to have WireGuard tools installed for this action to succeed')
+            raise e
+        else:  # Python <3.11
+            raise FileNotFoundError(str(e) + '\n' + note)
+
 def generate_privatekey():
     """Generates a WireGuard private key"""
-    out, err, returncode = execute('wg genkey', suppressoutput=True)
+    out, err, returncode = execute_wgtools('wg genkey')
     if (returncode != 0) or (len(err) > 0):
         return None
     out = out.strip() # remove trailing newline
@@ -43,7 +55,7 @@ def get_publickey(wg_private):
     """Gets the public key belonging to the given WireGuard private key"""
     if wg_private is None:
         return None
-    out, err, returncode = execute('wg pubkey', input=wg_private, suppressoutput=True)
+    out, err, returncode = execute_wgtools('wg pubkey', input=wg_private)
     if (returncode != 0) or (len(err) > 0):
         return None
     out = out.strip() # remove trailing newline
@@ -57,7 +69,7 @@ def generate_keypair():
 
 def generate_presharedkey():
     """Generates a WireGuard preshared key"""
-    out, err, returncode = execute('wg genpsk', suppressoutput=True)
+    out, err, returncode = execute_wgtools('wg genpsk')
     if (returncode != 0) or (len(err) > 0):
         return None
     out = out.strip() # remove trailing newline
