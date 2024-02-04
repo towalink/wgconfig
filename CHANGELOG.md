@@ -6,7 +6,7 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
-- More helpful exception output in case WireGuard tools are not installed but needed
+- n/a
 
 ### Changed
 
