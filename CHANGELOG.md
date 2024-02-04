@@ -16,6 +16,13 @@ All notable changes to this project are documented in this file.
 
 - n/a
 
+## [1.0.1] - 2024-01-30
+
+### Added
+
+- More helpful exception output in case WireGuard tools are not installed but needed
+
+
 ## [1.0.0] - 2023-07-27
 
 ### Added
