@@ -14,7 +14,8 @@ setup_kwargs = {
     'long_description': long_description,
     'long_description_content_type': 'text/markdown',
     'url': 'https://www.github.com/towalink/wgconfig',
-    'packages': setuptools.find_packages(),
+    'packages': setuptools.find_packages('src'),
+    'package_dir': {'': 'src'},
     'classifiers': [
         'Programming Language :: Python',
         'License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)',
