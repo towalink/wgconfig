@@ -1,0 +1,23 @@
+Source: wgconfig
+Maintainer: The Towalink Project <pypi.wgconfig@towalink.net>
+Homepage: https://www.towalink.net
+Section: python
+Priority: optional
+Build-Depends: debhelper-compat (= 13),
+               dh-python,
+               python3-all (>= 3.5),
+               python3-setuptools,
+               python3-pytest,
+Standards-Version: 4.1.1
+Vcs-Git: https://github.com/towalink/wgconfig.git
+Vcs-Browser: https://github.com/towalink/wgconfig
+
+Package: python3-wgconfig
+Architecture: all
+Depends: ${misc:Depends}, ${python3:Depends}, python3:any
+Description: parsing and writing WireGuard configuration files (comment preserving)
+ WireGuard config files are ini-style. Since all "Peer" sections have the same
+ name, these files cannot be parsed and modified by most libraries handling 
+ configuration files. Most existing libraries are not able to preserve or even 
+ add comments when modifying a config file. "wgconfig" was created to work with
+ WireGuard configuration files and to preserve comments.

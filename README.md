@@ -27,6 +27,12 @@ Install using PyPi:
 pip3 install wgconfig
 ```
 
+Or download the provided Debian package (in the desired version) and install it:
+
+```shell
+dpkg -i python3-wgconfig_1.0.2-1_all.deb
+```
+
 ---
 
 ## Quickstart
@@ -312,5 +318,5 @@ pytest <path to root of "test" directory>
 [![License](http://img.shields.io/:license-agpl3-blue.svg?style=flat-square)](https://opensource.org/licenses/AGPL-3.0)
 
 - **[AGPL3 license](https://opensource.org/licenses/AGPL-3.0)**
-- Copyright 2020-2023 © <a href="https://github.com/towalink/wgconfig" target="_blank">Dirk Henrici</a>.
+- Copyright 2020-2024 © <a href="https://github.com/towalink/wgconfig" target="_blank">Dirk Henrici</a>.
 - [WireGuard](https://www.wireguard.com/) is a registered trademark of Jason A. Donenfeld.

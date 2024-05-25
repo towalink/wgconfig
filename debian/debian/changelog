@@ -1,0 +1,5 @@
+wgconfig (1.0.2-1) unstable; urgency=low
+
+  * Closes: #1071868 (ITP).
+
+ -- Dirk Henrici <towalink.wgconfig@henrici.name>  Sat, 25 May 2024 00:00:00 +0200
