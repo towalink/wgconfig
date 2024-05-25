@@ -1,14 +1,15 @@
 Source: wgconfig
 Maintainer: The Towalink Project <pypi.wgconfig@towalink.net>
-Homepage: https://www.towalink.net
 Section: python
 Priority: optional
 Build-Depends: debhelper-compat (= 13),
-               dh-python,
+               dh-sequence-python3,
                python3-all (>= 3.5),
-               python3-setuptools,
                python3-pytest,
-Standards-Version: 4.1.1
+               python3-setuptools,
+Rules-Requires-Root: no
+Standards-Version: 4.7.0
+Homepage: https://github.com/towalink/wgconfig
 Vcs-Git: https://github.com/towalink/wgconfig.git
 Vcs-Browser: https://github.com/towalink/wgconfig
 
