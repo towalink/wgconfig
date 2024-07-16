@@ -16,6 +16,12 @@ All notable changes to this project are documented in this file.
 
 - n/a
 
+## [1.0.4] - 2024-07-16
+
+### Fixed
+
+- Package config file for automated tests in correct manner
+
 ## [1.0.3] - 2024-07-07
 
 ### Changed

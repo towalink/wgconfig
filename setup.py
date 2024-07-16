@@ -7,7 +7,7 @@ with open('README.md', 'r') as f:
 
 setup_kwargs = {
     'name': 'wgconfig',
-    'version': '1.0.3',
+    'version': '1.0.4',
     'author': 'Dirk Henrici',
     'author_email': 'towalink.wgconfig@henrici.name',
     'description': 'parsing and writing WireGuard configuration files',
@@ -16,9 +16,9 @@ setup_kwargs = {
     'url': 'https://www.github.com/towalink/wgconfig',
     'packages': setuptools.find_namespace_packages('src'),
     'package_dir': {'': 'src'},
-    'data_files': [
-        ('test', ['test/wgtest1.conf']),
-    ],
+    'package_data': {
+        'test': ['test/wgtest1.conf'],
+    },
     'classifiers': [
         'Programming Language :: Python',
         'License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)',

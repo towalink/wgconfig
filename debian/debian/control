@@ -1,5 +1,5 @@
 Source: wgconfig
-Maintainer: The Towalink Project <pypi.wgconfig@towalink.net>
+Maintainer: Dirk Henrici <towalink.wgconfig@henrici.name>
 Section: python
 Priority: optional
 Build-Depends: debhelper-compat (= 13),
@@ -8,7 +8,7 @@ Build-Depends: debhelper-compat (= 13),
                python3-pytest,
                python3-setuptools,
 Rules-Requires-Root: no
-Standards-Version: 4.7.0
+Standards-Version: 4.6.2
 Homepage: https://github.com/towalink/wgconfig
 Vcs-Git: https://github.com/towalink/wgconfig.git
 Vcs-Browser: https://github.com/towalink/wgconfig
