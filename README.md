@@ -27,11 +27,23 @@ Install using PyPi:
 pip3 install wgconfig
 ```
 
-Or download the provided Debian package (in the desired version) and install it:
+### Package for Debian Linux
+
+Download the provided Debian package (in the desired version) and install it:
 
 ```shell
 dpkg -i python3-wgconfig_1.0.2-1_all.deb
 ```
+
+### Package for Alpine Linux
+
+You may install the Alpine package (https://pkgs.alpinelinux.org/packages?name=py3-wgconfig) from Alpine's testing repository:
+
+```shell
+apk add wgconfig@testing
+```
+
+Note that a line like `@testing https://dl-cdn.alpinelinux.org/alpine/edge/testing` needs to be present in `/etc/apk/repositories` to make the testing repository available.
 
 ---
 
