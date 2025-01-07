@@ -28,7 +28,7 @@ class WGConfig():
     _interface = None # interface attributes
     _peers = None # peer data
 
-    def __init__(self, file, keyattr='PublicKey'):
+    def __init__(self, file=None, keyattr='PublicKey'):
         """Object initialization"""
         self.filename = self.file2filename(file)
         self.keyattr = keyattr
@@ -38,6 +38,8 @@ class WGConfig():
     @staticmethod
     def file2filename(file):
         """Handle special filenames: 'wg0' and 'wg0.conf' become '/etc/wireguard/wg0.conf' """
+        if file is None:
+            return None
         if os.path.basename(file) == file:
             if not file.endswith('.conf'):
                 file += '.conf'
@@ -49,11 +51,21 @@ class WGConfig():
         self._interface = None
         self._peers = None
 
+    def read_from_fileobj(self, fobj):
+        """Reads from the given file object into memory"""
+        self.lines = [line.rstrip() for line in fobj.readlines()]
+        self.invalidate_data()
+
+    def write_to_fileobj(self, fobj):
+        """Writes from memory to the given file object"""
+        fobj.writelines(line + '\n' for line in self.lines)
+
     def read_file(self):
         """Reads the WireGuard config file into memory"""
+        if self.filename is None:
+            raise ValueError('A filename needs to be provided on object creation')
         with open(self.filename, 'r') as wgfile:
-            self.lines = [line.rstrip() for line in wgfile.readlines()]
-        self.invalidate_data()
+            self.read_from_fileobj(wgfile)
 
     def write_file(self, file=None):
         """Writes a WireGuard config file from memory to file"""
@@ -61,8 +73,10 @@ class WGConfig():
             filename = self.filename
         else:
             filename = self.file2filename(file)
+        if filename is None:
+            raise ValueError('A filename needs to be provided')
         with os.fdopen(os.open(filename, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o640), 'w') as wgfile:
-            wgfile.writelines(line + '\n' for line in self.lines)
+            self.write_to_fileobj(wgfile)
 
     @staticmethod
     def parse_line(line):
