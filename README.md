@@ -57,7 +57,7 @@ Read and parse the existing WireGuard configuration file 'wg0.conf' located in '
 import wgconfig
 wc = wgconfig.WGConfig('wg0')
 wc.read_file()
-print('INTERFACE DATA:', , wc.get_interface())
+print('INTERFACE DATA:', wc.get_interface())
 print('LIST OF PEERS:', wc.get_peers())
 print('ALL PEER DATA:', wc.get_peers(keys_only=False))
 ```
@@ -298,6 +298,28 @@ Parameters:
 Examples:
 * `wc.get_peer_enabled('801mgm2JhjTOCxfihEknzFJGYxDvi+8oVYBrWe3hOWM=')`
 
+#### `read_from_fileobj(fobj)`
+
+*Reads the WireGuard config file from a file object (e.g. StringIO) into memory*
+
+Note: This reads from the current file position (from the beginning ofter regular opening; or as set with `seek`) until the end of file.
+
+Parameters:
+* "fobj" (str): File-like object
+
+Examples:
+* see examples/stringio.py
+        
+#### `write_to_fileobj(fobj)`
+
+*Writes a WireGuard config file from memory to a file-like object*
+      
+Parameters:
+* "fobj" (str): File-like object
+
+Examples:
+* see examples/stringio.py
+
 ---
 
 ## Reporting bugs
@@ -330,5 +352,5 @@ pytest <path to root of "test" directory>
 [![License](http://img.shields.io/:license-agpl3-blue.svg?style=flat-square)](https://opensource.org/licenses/AGPL-3.0)
 
 - **[AGPL3 license](https://opensource.org/licenses/AGPL-3.0)**
-- Copyright 2020-2024 © <a href="https://github.com/towalink/wgconfig" target="_blank">Dirk Henrici</a>.
+- Copyright 2020-2025 © <a href="https://github.com/towalink/wgconfig" target="_blank">Dirk Henrici</a>.
 - [WireGuard](https://www.wireguard.com/) is a registered trademark of Jason A. Donenfeld.

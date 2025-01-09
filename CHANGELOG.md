@@ -16,11 +16,16 @@ All notable changes to this project are documented in this file.
 
 - n/a
 
-## [1.1.0] - 2025-01-07
+## [1.1.0] - 2025-01-08
 
 ### Added
 
+- Add examples in new directory
 - Support the use of file-like objects like StringIO (using write_to_fileobj and read_from_fileobj)
+
+## Fixed
+
+- Removed superfluous "," in README
 
 ## [1.0.4] - 2024-07-16
 
