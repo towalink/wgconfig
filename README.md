@@ -27,6 +27,8 @@ Install using PyPi:
 pip3 install wgconfig
 ```
 
+Note that Python 2.7 is only supported up to version 1.1.0.
+
 ### Package for Debian Linux
 
 Download the provided Debian package (in the desired version) and install it:
@@ -352,5 +354,5 @@ pytest <path to root of "test" directory>
 [![License](http://img.shields.io/:license-agpl3-blue.svg?style=flat-square)](https://opensource.org/licenses/AGPL-3.0)
 
 - **[AGPL3 license](https://opensource.org/licenses/AGPL-3.0)**
-- Copyright 2020-2025 © <a href="https://github.com/towalink/wgconfig" target="_blank">Dirk Henrici</a>.
+- Copyright 2020-2026 © <a href="https://github.com/towalink/wgconfig" target="_blank">Dirk Henrici</a>.
 - [WireGuard](https://www.wireguard.com/) is a registered trademark of Jason A. Donenfeld.

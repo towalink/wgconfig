@@ -2,15 +2,6 @@
 
 """wgconfig.py: A class for parsing and writing WireGuard configuration files."""
 
-# The following imports are for Python2 support only
-from __future__ import with_statement
-from __future__ import absolute_import
-from __future__ import print_function
-from builtins import str
-from builtins import range
-from io import open
-
-
 __author__ = "Dirk Henrici"
 __license__ = "AGPL" # + author has right to release in parallel under different licenses
 __email__ = "towalink.wgconfig@henrici.name"
@@ -85,7 +76,6 @@ class WGConfig():
         attr = attr.strip()
         parts = value.partition('#')
         value = parts[0].strip() # strip comments and whitespace
-        value = str(value) # this line is for Python2 support only
         comment = parts[1] + parts[2]
         if value.isnumeric():
             value = [int(value)]
@@ -141,7 +131,7 @@ class WGConfig():
                     last_empty_line_in_section = None
                 section_data[self.SECTION_LASTLINE] = [i]
                 if not section in ['interface', 'peer']:
-                    raise ValueError('Unsupported section [{0}] in line {1}'.format(section, i))
+                    raise ValueError(f'Unsupported section [{section}] in line {i}')
             elif line.startswith('#'):
                 section_data[self.SECTION_LASTLINE] = [i]
             else: # regular line
@@ -205,7 +195,7 @@ class WGConfig():
         self.handle_leading_comment(leading_comment) # add leading comment if needed
         # Append peer with key attribute
         self.lines.append('[Peer]')
-        self.lines.append('{0} = {1}'.format(self.keyattr, key))
+        self.lines.append(f'{self.keyattr} = {key}')
         # Invalidate data cache
         self.invalidate_data()
 
@@ -256,7 +246,7 @@ class WGConfig():
         if (line_found is None) or append_as_line:
             line_found = section_lastline if (line_found is None) else line_found
             line_found += 1
-            self.lines.insert(line_found, '{0} = {1}'.format(attr, value))
+            self.lines.insert(line_found, f'{attr} = {value}')
         else:
             line_attr, line_value, line_comment = self.parse_line(self.lines[line_found])
             line_value.append(value)

@@ -2,10 +2,6 @@
 
 """Simple wrapper around WireGuard commands"""
 
-# The following imports are for Python2 support only
-from __future__ import absolute_import
-from __future__ import print_function
-
 import logging
 import shlex
 import subprocess

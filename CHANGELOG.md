@@ -16,6 +16,13 @@ All notable changes to this project are documented in this file.
 
 - n/a
 
+## [1.2.0] - 2026-03-19
+
+### Changed
+
+- Drop support for Python 2.7
+- Use new format for license identifier
+
 ## [1.1.0] - 2025-01-08
 
 ### Added
